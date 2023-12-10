@@ -1,0 +1,933 @@
+-
+  name: dimers same color
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 2), same_color(_, L).
+
+  positive_set:
+  - quadrant_or_center:
+      - any_displacement:
+          - repeat_before: &dimer_color
+              n: 2
+              list: &fixed_random_color
+              - pick_before:
+                  n: 1
+                  list:
+                    - &any_red { shape: ~, color: red, size: ~ }
+                    - &any_grn { shape: ~, color: green, size: ~ }
+                    - &any_blu { shape: ~, color: blue, size: ~ }
+                    - &any_cyn { shape: ~, color: cyan, size: ~ }
+                    - &any_mag { shape: ~, color: magenta, size: ~ }
+                    - &any_ylw { shape: ~, color: yellow, size: ~ }
+  negative_set:
+  - quadrant_or_center:
+    - any_displacement:
+        - repeat_before:
+            n: 2
+            list:
+              - &any_obj {shape: ~, color: ~, size: ~}
+
+
+-
+  name: dimers same shape
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 2), same_shape(_, L).
+
+  positive_set:
+  - quadrant_or_center:
+      - any_displacement:
+          - repeat_before: &dimer_shape
+              n: 2
+              list: &fixed_random_shape
+              - pick_before:
+                  n: 1
+                  list:
+                    - &any_tri { shape: triangle, color: ~, size: ~ }
+                    - &any_squ { shape: square, color: ~, size: ~ }
+                    - &any_cir { shape: circle, color: ~, size: ~ }
+  negative_set:
+  - quadrant_or_center:
+    - any_displacement:
+        - repeat_before:
+            n: 2
+            list:
+              - *any_obj
+
+-
+  name: trimers same color
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 3), same_color(_, L).
+
+  positive_set:
+  - quadrant_or_center:
+      - any_displacement:
+          - repeat_before: &trimer_color
+              n: 3
+              list: *fixed_random_color
+  negative_set:
+  - quadrant_or_center:
+    - any_displacement:
+        - repeat_before:
+            n: 3
+            list:
+              - *any_obj
+  - quadrant_or_center:
+      - any_displacement:
+        - repeat_before: *dimer_color
+
+-
+  name: trimers same shape
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 3), same_shape(_, L).
+
+  positive_set:
+  - quadrant_or_center:
+      - any_displacement:
+          - repeat_before: &trimer_shape
+              n: 3
+              list: *fixed_random_shape
+  negative_set:
+  - quadrant_or_center:
+    - any_displacement:
+        - repeat_before:
+            n: 3
+            list:
+              - *any_obj
+  - quadrant_or_center:
+      - any_displacement:
+        - repeat_before: *dimer_shape
+
+-
+  name: exists house
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), house(C1).
+
+  positive_set:
+  - any_displacement:
+      - permute:
+          - repeat_before:
+              n: 3
+              list: &any_dimer
+                - any_non_diag:
+                  - repeat_before:
+                      n: 2
+                      list:
+                      - *any_obj
+      - pick: &house
+          n: 1
+          list:
+            - stack:
+                  - { shape: triangle, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+            - stack:
+                - { shape: triangle, color: ~, size: large }
+                - { shape: square, color: ~, size: large }
+  negative_set:
+  - any_displacement:
+      - repeat_before:
+          n: 4
+          list: *any_dimer
+
+
+-
+  name: exists car
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), car(C1).
+
+  positive_set:
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 3
+                list: *any_dimer
+        - pick: &car
+            n: 1
+            list:
+              - side_by_side:
+                  - repeat:
+                      n: 2
+                      list:
+                      - { shape: circle, color: ~, size: small }
+              - side_by_side:
+                  - repeat:
+                      n: 2
+                      list:
+                      - { shape: circle, color: ~, size: large }
+  negative_set:
+    - any_diag:
+        - repeat_before:
+            n: 4
+            list: *any_dimer
+
+-
+  name: exists tower
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), tower(C1).
+
+  positive_set:
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 3
+                list: &any_kmer
+                  - any_non_diag:
+                    - random_repeat_before:
+                        min: 2
+                        max: 3
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+            - pick: &tower
+                n: 1
+                list:
+                  - stack:
+                      - { shape: square, color: ~, size: small }
+                      - { shape: square, color: ~, size: small }
+                  - stack:
+                      - { shape: square, color: ~, size: large }
+                      - { shape: square, color: ~, size: large }
+                  - stack:
+                      - { shape: square, color: ~, size: small }
+                      - { shape: square, color: ~, size: small }
+                      - { shape: square, color: ~, size: small }
+                  - stack:
+                      - { shape: square, color: ~, size: large }
+                      - { shape: square, color: ~, size: large }
+                      - { shape: square, color: ~, size: large }
+  negative_set:
+  - any_diag:
+    - repeat_before:
+        n: 4
+        list: *any_kmer
+
+
+-
+  name: exists wagon
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), wagon(C1).
+
+  positive_set:
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 3
+                list: *any_kmer
+            - pick: &wagon
+                n: 1
+                list:
+                  - side_by_side:
+                      - { shape: square, color: ~, size: small }
+                      - { shape: square, color: ~, size: small }
+                  - side_by_side:
+                      - { shape: square, color: ~, size: large }
+                      - { shape: square, color: ~, size: large }
+                  - side_by_side:
+                      - { shape: square, color: ~, size: small }
+                      - { shape: square, color: ~, size: small }
+                      - { shape: square, color: ~, size: small }
+                  - side_by_side:
+                      - { shape: square, color: ~, size: large }
+                      - { shape: square, color: ~, size: large }
+                      - { shape: square, color: ~, size: large }
+  negative_set:
+    - any_diag:
+        - repeat_before:
+            n: 4
+            list: *any_kmer
+
+-
+  name: traffic light
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), traffic_light(C1).
+
+  positive_set:
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 3
+                list: &any_trimer
+                  - any_non_diag:
+                    - repeat_before:
+                        n: 3
+                        list:
+                          - *any_obj
+            - pick: &traffic_light
+                n: 1
+                list:
+                  - stack:
+                      - { shape: circle, color: red, size: small }
+                      - { shape: circle, color: yellow, size: small }
+                      - { shape: circle, color: green, size: small }
+                  - stack:
+                      - { shape: circle, color: red, size: large }
+                      - { shape: circle, color: yellow, size: large }
+                      - { shape: circle, color: green, size: large }
+  negative_set:
+    - any_diag:
+        - repeat_before:
+            n: 4
+            list: *any_trimer
+
+-
+  name: for each group exists shared shape
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+   valid(C) :- shape(SH), forall(contains(C, C1), (contains(C1, C2), extract_shape(C2, SH))).
+
+  positive_set:
+  - grid:
+    - permute:
+      - any_diag:
+          - permute:
+              - random_repeat_before:
+                  min: 1
+                  max: 3
+                  list:
+                    - *any_obj
+              - store_before:
+                  alias: random_shape
+                  list: *fixed_random_shape
+      - random_repeat_before:
+          min: 1
+          max: 3
+          list:
+          - any_diag:
+            - permute:
+              - random_repeat_before:
+                  min: 1
+                  max: 3
+                  list:
+                  - *any_obj
+              - recall:
+                  alias: random_shape
+  negative_set:
+  - grid:
+    - random_repeat_before:
+        min: 2
+        max: 4
+        list:
+        - any_diag:
+          - permute:
+            - random_repeat_before:
+                min: 2
+                max: 4
+                list:
+                - *any_obj
+-
+  name: for each group exists shared color
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- color(CO), forall(contains(C, C1), (contains(C1, C2), extract_color(C2, CO))).
+
+  positive_set:
+    - grid:
+        - permute:
+            - any_diag:
+                - permute:
+                    - random_repeat_before:
+                        min: 1
+                        max: 3
+                        list:
+                          - *any_obj
+                    - store_before:
+                        alias: random_color
+                        list: *fixed_random_color
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_diag:
+                      - permute:
+                          - random_repeat_before:
+                              min: 1
+                              max: 3
+                              list:
+                                - *any_obj
+                          - recall:
+                              alias: random_color
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 2
+            max: 4
+            list:
+              - any_diag:
+                  - permute:
+                      - random_repeat_before:
+                          min: 2
+                          max: 4
+                          list:
+                            - *any_obj
+
+-
+  name: for each group exists shared named object
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- named_object(X), forall(contains(C, C1), (contains(C1, C2), is_named_object(C2, X))).
+    
+
+  positive_set:
+    - grid:
+        - permute:
+            - any_diag:
+                - permute:
+                    - random_repeat_before:
+                        min: 1
+                        max: 3
+                        list: *any_kmer
+                    - store_before:
+                        alias: random_named_obj
+                        list:
+                          - pick_before:
+                              n: 1
+                              list:
+                                - pick: *house
+                                - pick: *car
+                                - pick: *tower
+                                - pick: *traffic_light
+                                - pick: *wagon
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_diag:
+                      - permute:
+                          - random_repeat_before:
+                              min: 1
+                              max: 3
+                              list: *any_kmer
+                          - recall:
+                              alias: random_named_obj
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 2
+            max: 4
+            list:
+              - any_diag:
+                  - permute:
+                      - random_repeat_before:
+                          min: 2
+                          max: 4
+                          list: *any_kmer
+-
+  name: flat palindromes
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    valid(C) :- extract_children(C, L), reverse(L, L).
+
+  positive_set:
+  - any_line:
+    - palindrome:
+      - random_repeat_before:
+          min: 2
+          max: 4
+          list:
+            - *any_obj
+  negative_set:
+  - any_line:
+    - permute:
+      - palindrome:          # A permuted palindrome guarantees that there will be the same objects as the positive set (which is different from a permutation of 5 random objects)
+        - random_repeat_before:
+            min: 2
+            max: 4
+            list:
+              - *any_obj
+
+-
+  name: pseudo palindrome
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    pseudo_palindrome([]).
+    pseudo_palindrome([_]).
+    pseudo_palindrome(L) :- middle(L,M),pseudo_palindrome(M),last(L,A),first(L,B), same_shape(_, [A,B]).
+    pseudo_palindrome(L) :- middle(L,M),pseudo_palindrome(M),last(L,A),first(L,B), same_color(_, [A,B]).
+    valid(C) :- extract_children(C, L), pseudo_palindrome(L).
+
+  positive_set:
+  - any_line:
+    - palindrome_before:
+        - pick_before: &fixed_random_attr
+            n: 1
+            list:
+              - *any_tri
+              - *any_squ
+              - *any_cir
+              - *any_red
+              - *any_grn
+              - *any_blu
+              - *any_cyn
+              - *any_mag
+              - *any_ylw
+        - pick_before: *fixed_random_attr
+        - pick_before: *fixed_random_attr
+
+  negative_set:
+    - any_line:
+        - permute:
+          - palindrome_before:
+              - repeat_before:
+                  n: 3
+                  list:
+                    - *any_obj
+
+-
+  name: pseudo palindrome with named objects
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    
+    pseudo_palindrome2([]).
+    pseudo_palindrome2([_]).
+    pseudo_palindrome2(L) :- middle(L,M),pseudo_palindrome2(M),last(L,A),first(L,B), same_shape(_, [A,B]).
+    pseudo_palindrome2(L) :- middle(L,M),pseudo_palindrome2(M),last(L,A),first(L,B), same_color(_, [A,B]).
+    pseudo_palindrome2(L) :- middle(L,M),pseudo_palindrome2(M),last(L,C1),first(L,C2), is_named_object(C1, X), is_named_object(C2, X).
+    valid(C) :- extract_children(C, L), pseudo_palindrome2(L).
+
+  positive_set:
+  - any_diag:
+    - palindrome_before:
+        - permute_before:
+          - pick_before: *fixed_random_attr
+          - pick_before: *fixed_random_attr
+          - pick_before: *fixed_random_attr
+          - pick_before:
+              n: 1
+              list:
+                - pick: *house
+                - pick: *car
+                - pick: *tower
+                - pick: *traffic_light
+                - pick: *wagon
+
+  negative_set:
+    - any_diag:
+        - permute:
+            - palindrome_before:
+                - permute_before:
+                    - pick_before: *fixed_random_attr
+                    - pick_before: *fixed_random_attr
+                    - pick_before: *fixed_random_attr
+                    - pick_before:
+                        n: 1
+                        list:
+                          - pick: *house
+                          - pick: *car
+                          - pick: *tower
+                          - pick: *traffic_light
+                          - pick: *wagon
+-
+  name: odd same color even same shape
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    valid(C) :- extract_children(C, L), length(L, N), odd(N), same_color(_, L).
+    valid(C) :- extract_children(C, L), length(L, N), even(N), same_shape(_, L).
+
+  positive_set:
+  - any_displacement: # Odd case
+    - permute:
+      - store_before:
+          alias: color
+          list: *fixed_random_color
+      - repeat_before:
+          n: 2
+          list:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+              - recall:
+                  alias: color
+  - any_displacement: # Even case
+    - permute:
+      - repeat_before:
+          n: 2
+          list:
+          - store_before:
+              alias: shape
+              list: *fixed_random_shape
+
+          - random_repeat_before:
+              min: 0
+              max: 2
+              list:
+              - recall:
+                  alias: shape
+
+  negative_set:
+  - any_displacement: # Odd case
+    - permute:
+      - store_before:
+          alias: shape
+          list: *fixed_random_shape
+      - repeat_before:
+          n: 2
+          list:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+              - recall:
+                  alias: shape
+  - any_displacement: # Even case
+    - permute:
+      - repeat_before:
+          n: 2
+          list:
+          - store_before:
+              alias: color
+              list: *fixed_random_color
+          - random_repeat_before:
+              min: 0
+              max: 2
+              list:
+              - recall:
+                  alias: color
+
+-
+  name: if traffic light then car, else if house then tower
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    tmp(C) :- contains(C, C1), is_named_object(C1, traffic_light).
+    tmp2(C) :- contains(C, C2), is_named_object(C2, house).
+    
+    valid(C) :- contains(C, C1), is_named_object(C1, traffic_light), contains(C, C2), is_named_object(C2, car).
+    valid(C) :- contains(C, C1), is_named_object(C1, house), contains(C, C2), is_named_object(C2, tower).
+    valid(C) :- not(tmp(C)), not(tmp2(C)).
+
+  positive_set:
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 2
+                list:
+                  - *any_obj
+            - pick: *traffic_light
+            - pick: *car
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 2
+                list:
+                  - *any_obj
+            - pick: *house
+            - pick: *tower
+    - any_diag: # Rejection by rule will filter spurious positives...
+        - permute:
+            - repeat_before:
+                n: 2
+                list:
+                  - *any_obj
+            - sample:
+                n: 2
+                list:
+                  - pick: *house
+                  - pick: *car
+                  - pick: *tower
+                  - pick: *wagon
+                  - pick: *traffic_light
+
+  negative_set:
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 2
+                list:
+                  - *any_obj
+            - pick: *traffic_light
+            - pick:
+                n: 1
+                list:
+                  - pick: *house
+                  - pick: *tower
+                  - pick: *wagon
+                  - pick: *traffic_light
+    - any_diag:
+        - permute:
+            - repeat_before:
+                n: 2
+                list:
+                  - *any_obj
+            - pick: *house
+            - pick:
+                n: 1
+                list:
+                  - pick: *house
+                  - pick: *car
+                  - pick: *wagon
+                  - pick: *traffic_light
+
+-
+  name: universal if traffic light then car, else if house then tower
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  positive_rule: |-
+    tmp(C) :- contains(C, C1), is_named_object(C1, traffic_light).
+    tmp2(C) :- contains(C, C2), is_named_object(C2, house).
+    
+    valid1(C) :- contains(C, C1), is_named_object(C1, traffic_light), contains(C, C2), is_named_object(C2, car).
+    valid1(C) :- contains(C, C1), is_named_object(C1, house), contains(C, C2), is_named_object(C2, tower).
+    valid1(C) :- not(tmp(C)), not(tmp2(C)).
+    
+    valid(C) :- forall(contains(C, C1), valid1(C1)).
+
+  positive_set:
+    - grid:
+        - random_repeat_before:
+            min: 2
+            max: 4
+            list:
+              - pick_before:
+                  n: 1
+                  list:
+                  - any_diag:
+                      - permute:
+                          - repeat_before:
+                              n: 2
+                              list:
+                                - *any_obj
+                          - pick: *traffic_light
+                          - pick: *car
+                  - any_diag:
+                      - permute:
+                          - repeat_before:
+                              n: 2
+                              list:
+                                - *any_obj
+                          - pick: *house
+                          - pick: *tower
+                  - any_diag: # Rejection by rule will filter spurious positives...
+                      - permute:
+                          - repeat_before:
+                              n: 2
+                              list:
+                                - *any_obj
+                          - sample:
+                              n: 2
+                              list:
+                                - pick: *house
+                                - pick: *car
+                                - pick: *tower
+                                - pick: *wagon
+                                - pick: *traffic_light
+
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 2
+            max: 4
+            list:
+              - pick_before:
+                  n: 1
+                  list:
+                  - any_diag:
+                      - permute:
+                          - repeat_before:
+                              n: 2
+                              list:
+                                - *any_obj
+                          - pick: *traffic_light
+                          - pick:
+                              n: 1
+                              list:
+                                - pick: *house
+                                - pick: *tower
+                                - pick: *wagon
+                                - pick: *traffic_light
+                  - any_diag:
+                      - permute:
+                          - repeat_before:
+                              n: 2
+                              list:
+                                - *any_obj
+                          - pick: *house
+                          - pick:
+                              n: 1
+                              list:
+                                - pick: *house
+                                - pick: *car
+                                - pick: *wagon
+                                - pick: *traffic_light
+    - grid:
+      - permute:
+          - pick_before:
+              n: 1
+              list:
+                - any_diag:
+                    - permute:
+                        - repeat_before:
+                            n: 2
+                            list:
+                              - *any_obj
+                        - pick: *traffic_light
+                        - pick: *car
+                - any_diag:
+                    - permute:
+                        - repeat_before:
+                            n: 2
+                            list:
+                              - *any_obj
+                        - pick: *house
+                        - pick: *tower
+                - any_diag: # Rejection by rule will filter spurious positives...
+                    - permute:
+                        - repeat_before:
+                            n: 2
+                            list:
+                              - *any_obj
+                        - sample:
+                            n: 2
+                            list:
+                              - pick: *house
+                              - pick: *car
+                              - pick: *tower
+                              - pick: *wagon
+                              - pick: *traffic_light
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - pick_before:
+                    n: 1
+                    list:
+                      - any_diag:
+                          - permute:
+                              - repeat_before:
+                                  n: 2
+                                  list:
+                                    - *any_obj
+                              - pick: *traffic_light
+                              - pick:
+                                  n: 1
+                                  list:
+                                    - pick: *house
+                                    - pick: *tower
+                                    - pick: *wagon
+                                    - pick: *traffic_light
+                      - any_diag:
+                          - permute:
+                              - repeat_before:
+                                  n: 2
+                                  list:
+                                    - *any_obj
+                              - pick: *house
+                              - pick:
+                                  n: 1
+                                  list:
+                                    - pick: *house
+                                    - pick: *car
+                                    - pick: *wagon
+                                    - pick: *traffic_light

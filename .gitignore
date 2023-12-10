@@ -1,0 +1,4 @@
+samples/
+.idea
+__pycache__
+*.bak

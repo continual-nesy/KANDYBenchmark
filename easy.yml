@@ -1,0 +1,633 @@
+-
+  name: triangle vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, triangle).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: triangle, color: ~, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: not_triangle, color: ~, size: ~}
+-
+  name: square vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, square).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: square, color: ~, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: not_square, color: ~, size: ~}
+-
+  name: circle vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, circle).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: circle, color: ~, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: not_circle, color: ~, size: ~}
+
+-
+  name: red vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, red).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: ~, color: red, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: ~, color: not_red, size: ~}
+
+-
+  name: green vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, green).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: ~, color: green, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: ~, color: not_green, size: ~}
+
+-
+  name: blue vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, blue).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: ~, color: blue, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: ~, color: not_blue, size: ~}
+
+-
+  name: cyan vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, cyan).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: ~, color: cyan, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: ~, color: not_cyan, size: ~}
+
+-
+  name: magenta vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, magenta).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: ~, color: magenta, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: ~, color: not_magenta, size: ~}
+
+-
+  name: yellow vs any
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, yellow).
+
+  positive_set:
+  - quadrant_or_center:
+    - {shape: ~, color: yellow, size: ~}
+  negative_set:
+  - quadrant_or_center:
+    - {shape: ~, color: not_yellow, size: ~}
+
+-
+  name: red triangle on the right
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- extract_children(C, L), last(L, C1), extract_shape(C1, triangle), extract_color(C1, red).
+
+  positive_set:
+  - side_by_side:
+    - {shape: ~, color: ~, size: ~}
+    - {shape: triangle, color: red, size: ~}
+  negative_set:
+  - side_by_side:
+    - {shape: ~, color: ~, size: ~}
+    - pick:
+        n: 1
+        list:
+        - {shape: not_triangle, color: ~, size: ~}
+        - {shape: triangle, color: not_red, size: ~}
+
+-
+  name: red triangle on the right and arbitrary objects
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- extract_children(C, L), last(L, C1), extract_shape(C1, triangle), extract_color(C1, red).
+
+  positive_set:
+  - side_by_side:
+    - random_repeat_before:
+        min: 2
+        max: 5
+        list:
+        - {shape: ~, color: ~, size: ~}
+    - {shape: triangle, color: red, size: ~}
+  negative_set:
+  - side_by_side:
+    - permute:
+      - {shape: triangle, color: red, size: ~}
+      - random_repeat_before:
+          min: 2
+          max: 5
+          list:
+          - {shape: ~, color: ~, size: ~}
+  - side_by_side:
+      - permute:
+          - random_repeat_before:
+              min: 3
+              max: 6
+              list:
+                - { shape: ~, color: ~, size: ~ }
+
+-
+  name: red triangle on the right and at least one circle and arbitrary objects
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- extract_children(C, L), last(L, C1), member(C2, L), extract_shape(C1, triangle), extract_color(C1, red), extract_shape(C2, circle).
+
+  positive_set:
+  - side_by_side:
+    - permute:
+      - {shape: circle, color: ~, size: ~}
+      - random_repeat_before:
+          min: 1
+          max: 4
+          list:
+          - {shape: ~, color: ~, size: ~}
+    - {shape: triangle, color: red, size: ~}
+  negative_set:
+  - side_by_side: # Negative 1: the triangle is not at the end
+    - permute:
+      - { shape: circle, color: ~, size: ~ }
+      - random_repeat_before:
+         min: 1
+         max: 4
+         list:
+         - { shape: ~, color: ~, size: ~ }
+      - { shape: triangle, color: red, size: ~ }
+  - side_by_side: # Negative 2: There is no red triangle but a circle
+    - permute:
+      - {shape: circle, color: ~, size: ~}
+      - pick:
+          n: 1
+          list:
+          - {shape: not_triangle, color: ~, size: ~}
+          - {shape: triangle, color: not_red, size: ~}
+      - random_repeat_before:
+          min: 1
+          max: 4
+          list:
+          - {shape: ~, color: ~, size: ~}
+  - side_by_side: # Negative 3: There is a red triangle but no circle
+    - permute:
+        - { shape: not_circle, color: ~, size: ~ }
+        - random_repeat_before:
+            min: 1
+            max: 4
+            list:
+              - { shape: ~, color: ~, size: ~ }
+    - { shape: triangle, color: red, size: ~ }
+  - side_by_side: # Negative 4: There is no circle nor red triangle
+    - random_repeat_before:
+        min: 2
+        max: 5
+        list:
+        - {shape: not_circle, color: ~, size: ~}
+    - pick:
+        n: 1
+        list:
+        - {shape: not_triangle, color: ~, size: ~}
+        - {shape: triangle, color: not_red, size: ~}
+
+-
+  name: red triangle on the right and at least one blue object and arbitrary objects
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- extract_children(C, L), last(L, C1), member(C2, L), extract_shape(C1, triangle), extract_color(C1, red), extract_color(C2, blue).
+
+  positive_set:
+  - side_by_side:
+    - permute:
+      - {shape: ~, color: blue, size: ~}
+      - random_repeat_before:
+          min: 1
+          max: 4
+          list:
+            - {shape: ~, color: ~, size: ~}
+    - {shape: triangle, color: red, size: ~}
+  negative_set:
+    - side_by_side: # Negative 1: the triangle is not at the end
+        - permute:
+            - { shape: ~, color: blue, size: ~ }
+            - random_repeat_before:
+                min: 1
+                max: 4
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+            - { shape: triangle, color: red, size: ~ }
+    - side_by_side: # Negative 2: There is no red triangle but a blue shape
+        - permute:
+            - { shape: ~, color: blue, size: ~ }
+            - pick:
+                n: 1
+                list:
+                  - { shape: not_triangle, color: ~, size: ~ }
+                  - { shape: triangle, color: not_red, size: ~ }
+            - random_repeat_before:
+                min: 1
+                max: 4
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+    - side_by_side: # Negative 3: There is a red triangle but no blue shape
+        - permute:
+            - { shape: ~, color: not_blue, size: ~ }
+            - random_repeat_before:
+                min: 1
+                max: 4
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+        - { shape: triangle, color: red, size: ~ }
+    - side_by_side: # Negative 4: There is no blue shape nor red triangle
+        - random_repeat_before:
+            min: 2
+            max: 5
+            list:
+              - { shape: ~, color: not_blue, size: ~ }
+        - pick:
+            n: 1
+            list:
+              - { shape: not_triangle, color: ~, size: ~ }
+              - { shape: triangle, color: not_red, size: ~ }
+
+-
+  name: triangle and square, same color
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- recursive_contains(C, C1), recursive_contains(C, C2), same_color(_, [C1, C2]), extract_shape(C1, triangle), extract_shape(C2, square).
+
+  positive_set:
+    - quadrant_or_center:
+      - any_displacement:
+        - store_before:
+            alias: color
+            list:
+            - pick_before:
+                n: 1
+                list:
+                - {shape: triangle, color: red, size: ~}
+                - {shape: triangle, color: green, size: ~}
+                - {shape: triangle, color: blue, size: ~}
+                - {shape: triangle, color: cyan, size: ~}
+                - {shape: triangle, color: magenta, size: ~}
+                - {shape: triangle, color: yellow, size: ~}
+        - union: # Convoluted way to extract the color from the stored triangle and transfer it to a square
+          - difference:
+            - {shape: ~, color: ~, size: ~}
+            - symmetric_difference:
+              - symmetric_difference:
+                - symmetric_difference:
+                  - {shape: ~, color: ~, size: small}
+                  - recall:
+                      alias: color
+                - {shape: triangle, color: ~, size: ~}
+              - {shape: square, color: ~, size: ~}
+          - difference:
+            - {shape: ~, color: ~, size: ~}
+            - symmetric_difference:
+              - symmetric_difference:
+                - symmetric_difference:
+                  - {shape: ~, color: ~, size: large}
+                  - recall:
+                      alias: color
+                - {shape: triangle, color: ~, size: ~}
+              - {shape: square, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+      - any_displacement:
+        - {shape: triangle, color: ~, size: ~}
+        - {shape: square, color: ~, size: ~}
+    - quadrant_or_center:
+      - any_displacement:
+        - { shape: ~, color: ~, size: ~ }
+        - { shape: ~, color: ~, size: ~ }
+    - quadrant_or_center:
+        - any_displacement:
+            - repeat_before:
+                n: 2
+                list:
+                - pick_before:
+                    n: 1
+                    list:
+                      - { shape: ~, color: red, size: ~ }
+                      - { shape: ~, color: green, size: ~ }
+                      - { shape: ~, color: blue, size: ~ }
+                      - { shape: ~, color: cyan, size: ~ }
+                      - { shape: ~, color: magenta, size: ~ }
+                      - { shape: ~, color: yellow, size: ~ }
+
+
+-
+  name: palindrome aba
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- extract_children(C, L), reverse(L, L).
+
+  positive_set:
+  - side_by_side:
+    - palindrome:
+      - {shape: ~, color: ~, size: ~}
+      - {shape: ~, color: ~, size: ~}
+  negative_set:
+  - side_by_side:
+    - permute:
+      - palindrome:
+        - {shape: ~, color: ~, size: ~}
+        - {shape: ~, color: ~, size: ~}
+-
+  name: house
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), house(C1).
+    
+  positive_set:
+  - quadrant_or_center:
+      - pick:
+          n: 1
+          list:
+            - stack:
+                  - { shape: triangle, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+            - stack:
+                - { shape: triangle, color: ~, size: large }
+                - { shape: square, color: ~, size: large }
+  negative_set:
+  - quadrant_or_center:
+    - stack:
+      - {shape: ~, color: ~, size: ~}
+      - {shape: ~, color: ~, size: ~}
+
+-
+  name: car
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), car(C1).
+
+  positive_set:
+    - quadrant_or_center:
+        - pick:
+            n: 1
+            list:
+              - side_by_side:
+                  - repeat:
+                      n: 2
+                      list:
+                      - { shape: circle, color: ~, size: small }
+              - side_by_side:
+                  - repeat:
+                      n: 2
+                      list:
+                      - { shape: circle, color: ~, size: large }
+  negative_set:
+  - quadrant_or_center:
+    - side_by_side:
+      - {shape: ~, color: ~, size: ~}
+      - {shape: ~, color: ~, size: ~}
+
+-
+  name: tower
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), tower(C1).
+
+  positive_set:
+    - quadrant_or_center:
+        - pick:
+            n: 1
+            list:
+              - stack:
+                  - { shape: square, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+              - stack:
+                  - { shape: square, color: ~, size: large }
+                  - { shape: square, color: ~, size: large }
+              - stack:
+                  - { shape: square, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+              - stack:
+                  - { shape: square, color: ~, size: large }
+                  - { shape: square, color: ~, size: large }
+                  - { shape: square, color: ~, size: large }
+  negative_set:
+  - quadrant_or_center:
+    - stack:
+      - random_repeat_before:
+          min: 2
+          max: 3
+          list:
+          - {shape: ~, color: ~, size: ~}
+
+-
+  name: wagon
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), wagon(C1).
+
+  positive_set:
+    - quadrant_or_center:
+        - pick:
+            n: 1
+            list:
+              - side_by_side:
+                  - { shape: square, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+              - side_by_side:
+                  - { shape: square, color: ~, size: large }
+                  - { shape: square, color: ~, size: large }
+              - side_by_side:
+                  - { shape: square, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+                  - { shape: square, color: ~, size: small }
+              - side_by_side:
+                  - { shape: square, color: ~, size: large }
+                  - { shape: square, color: ~, size: large }
+                  - { shape: square, color: ~, size: large }
+  negative_set:
+  - quadrant_or_center:
+    - side_by_side:
+      - random_repeat_before:
+          min: 2
+          max: 3
+          list:
+          - {shape: ~, color: ~, size: ~}
+
+-
+  name: traffic light
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.5
+  val_split: 0.25
+  noisy_color: True
+  noisy_size: True
+  positive_rule: >-
+    valid(C) :- contains(C, C1), traffic_light(C1).
+
+  positive_set:
+    - quadrant_or_center:
+        - pick:
+            n: 1
+            list:
+              - stack:
+                  - { shape: circle, color: red, size: small }
+                  - { shape: circle, color: yellow, size: small }
+                  - { shape: circle, color: green, size: small }
+              - stack:
+                  - { shape: circle, color: red, size: large }
+                  - { shape: circle, color: yellow, size: large }
+                  - { shape: circle, color: green, size: large }
+  negative_set:
+  - quadrant_or_center:
+    - stack:
+      - repeat_before:
+          n: 3
+          list:
+          - {shape: circle, color: ~, size: ~}

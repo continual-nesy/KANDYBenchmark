@@ -1,0 +1,19 @@
+seed: 12345
+canvas_size: [224, 224]
+padding: 3
+bg_color: "#7f7f7f"
+colors: # Lists, so they can be sorted. Keys should be unique.
+  - red: "#ff0000"
+  - yellow: "#ffff00"
+  - green: "#00ff00"
+  - cyan: "#00ffff"
+  - blue: "#0000ff"
+  - magenta: "#ff00ff"
+sizes:
+  - small: 7
+  - large: 15
+size_noise: 2
+h_sigma: 0.01
+s_sigma: 0.2
+v_sigma: 0.2
+background_knowledge: bg.pl
