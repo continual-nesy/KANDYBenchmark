@@ -1,7 +1,7 @@
 # KANDY benchmark and hierarchical Kandinsky pattern generator
 ## Description
 
-This library contains the generator and datasets for the [KANDY benchmark](https://duckduckgo.com).
+This library contains the generator and datasets for the [KANDY benchmark]([https://duckduckgo.com](https://arxiv.org/abs/2402.17431)).
 
 Datasets are available in the [release section](../../releases/latest/).
 Baseline experiments described in the paper are available in the `baseline` subfolder.
