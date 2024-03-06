@@ -6,8 +6,39 @@ color(magenta).
 color(yellow).
 
 shape(triangle).
-shape(circle).
 shape(square).
+shape(circle).
+
+% shape(down_triangle).
+% shape(diamond).
+% shape(pentagon).
+% shape(star_5).
+% shape(hexagon).
+% shape(star_6).
+% shape(ellipse_v).
+% shape(ellipse_h).
+
+% polygon(triangle).
+% polygon(down_triangle).
+% polygon(square).
+% polygon(diamond).
+% polygon(pentagon).
+% polygon(hexagon).
+% star(star_5).
+% star(star_6).
+% ellipse(circle).
+% ellipse(ellipse_v).
+% ellipse(ellipse_h).
+
+% sides(triangle, 3).
+% sides(down_triangle, 3).
+% sides(square, 4).
+% sides(diamond, 4).
+% sides(pentagon, 5).
+% sides(star_5, 5).
+% sides(hexagon, 6).
+% sides(star_6, 6).
+
 
 size(small).
 size(large).

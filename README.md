@@ -41,6 +41,7 @@ objects can be small or large ($10 \times 10$ and $25 \times 25$ pixels, respect
 take any of six colors (red, green, blue, cyan, magenta and yellow). Object sizes are
 corrupted by additive uniform noise in the range $\pm[0, 2]$ pixels, and color is corrupted
 by zero-mean Gaussian noise in HSV coordinates ($\sigma_H = 0.01, \sigma_S = 0.2, \sigma_V = 0.2$).
+No rotational noise is injected in any task. 
 These values were hand-picked to preserve perceptual boundaries (e.g., humans still
 perceive the maximally corrupted “red” as such). Background was set to gray.
 
@@ -98,7 +99,7 @@ A positive/negative set is a list of top level objects. As syntactic sugar, to s
 
 Sorting keys are:
 - `n`: element cardinality (1 for atomic elements, len(L) for compound elements)
-- `shape`: number of sides circle (0) < triangle (3) < square (4)
+- `shape`: shapes, in the order defined in config.yml (ideally by number of vertexes)
 - `color`: color, in the order defined in config.yml
 - `size`: size, in the order defined in config.yml, which may not reflect pixel size
 If the list contains one or more compound objects, the only valid sorting key is `n`, otherwise keys are evaluated in order (e.g., `[color, size]` first sorts by color and within objects of the same color it sorts by size).
@@ -120,6 +121,7 @@ In case this behavior is not desired, the following variants of list operators p
 - `mirror_before(L)`
 - `palindrome_before(L)`
 - `store_before(alias, L)`.
+
 Other operators are either equivariant with respect to grounding or are semantically ill-defined (e.g. sorting a list before knowing how it will be grounded) and they do not possess a `_before` variant. 
 
 An example which uses both before- and after-grounding list expansions is the following:
@@ -200,7 +202,7 @@ To maximize experimental robustness, three mechanisms are enforced:
 The following is an example curriculum composed of two tasks:
 ```
 - 
-  name: my_task
+  name: my task # Name of the task. Spaces are fully supported, if you want to use KANDY for Bongard problems, you can use this field as a ground truth natural language description for the entire task.
   gamma: 0.9 # maximum supervision
   beta: 0.5 # minimum supervision
   samples: 5000 # number of samples
@@ -208,6 +210,7 @@ The following is an example curriculum composed of two tasks:
   val_split: 0.1 # validation set split ratio. The test set is computed as (1.0 - train_split - val_split)
   noisy_color: True # Inject random noise to colors (while preserving semantic classes)?
   noisy_size: False # Inject random noise to sizes?
+  rot_noise: 0 # Randomly rotate atomic shapes? Values in [0, 360]. Shapes in this task will not be randomly rotated
   positive_set: # Definition of the positive set for the task. It contains a list of possible samples.
   - stack: # Compositional operator: receives a list of subelements.
     - palindrome:
@@ -249,7 +252,7 @@ The following is an example curriculum composed of two tasks:
               - *my_triangle
               - *my_small
 -
-  name: yet another task # spaces are fully supported
+  name: yet another task
   gamma: 0.0 # This task is fully unsupervised
   beta: 0.0
   samples: 3
@@ -257,6 +260,7 @@ The following is an example curriculum composed of two tasks:
   val_split: 0.2
   noisy_color: False
   noisy_size: False
+  rot_noise: 15 # In this case shapes will be rotated by a value between -15 and +15 degrees
   # This task has two (disjunctive) prolog rules for rejection sampling (and a predicate they depend on). It is assumed that predicates color/2 and contains/2 are defined in a .pl file linked in config.yml, otherwise the entire knowledge base could be specified here...
   positive_rule: >-
     is_green(X) :- color(X, green).
@@ -271,6 +275,7 @@ The following is an example curriculum composed of two tasks:
 
 
 All the tasks are assumed to be binary decision tasks determining whether an image belongs to a positive or negative set.
+
 **Important**: if there are enough unique samples, distributions are balanced (0.5 positives, 0.5 negatives), otherwise, the ratio between positive and negative samples will reflect the internal distribution of symbols (i.e., a task specified with positive set consisting of 7 elements and a negative set consisting of 3 elements will approach a 0.7/0.3 positives-to-negatives ratio).
 
 ## Examples

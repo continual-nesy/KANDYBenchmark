@@ -17,6 +17,7 @@ class Task:
         self.total_samples = task_specs["samples"]  # Number of samples to generate for this task.
         self.noisy_color = task_specs["noisy_color"]  # Should the color be altered with noise?
         self.noisy_size = task_specs["noisy_size"]  # Should the size be altered with noise?
+        self.rot_noise = task_specs["rot_noise"]  # Should atomic shapes be randomly rotated?
 
         # Color noise parameters: the RGB color is converted to HSV and then 0-mean gaussian noise is injected into each coordinate. These parameters are the standard deviation of each gaussian.
         # Values should be chosen by trial and error to preserve perceptual semantics for the entire palette of colors (ie. a human can classify a noisy yellow still as "yellow").
@@ -29,8 +30,9 @@ class Task:
         # Size noise parameter. A uniform random value from -noise to +noise is added to size. (eg. a base size of 25 pixels with a noise of 5 can range from 20 to 30 pixels).
         self.size_noise = config["size_noise"]
 
-        # Available base shapes. Extending this dictionary requires to rewrite sample_base_object() as well.
+        # Available base shapes. This dictionary can be extended arbitrarily, as long as each shape is defined by: type (polygon/star/ellipse), n (number of sides/points/ratio between axes), rot (rotation angle in [0,360) ).
         self.shapes = config["shapes"]
+        self.shape_names = config["shape_names"]
 
         # Available colors. This dictionary can be extended arbitrarily, as long as noise is adjusted accordingly.
         self.colors = config["colors"]
@@ -44,10 +46,6 @@ class Task:
         self.compositional_operators = set(config["compositional_operators"])
         self.list_operators = {k: [k2 for k2 in v.keys()] for k, v in config["list_operators"].items()}
         self.pregrounding_list_operators = {k: [k2 for k2 in v.keys()] for k, v in config["pregrounding_list_operators"].items()}
-
-        self.shapes = config["shapes"]
-        self.sizes = config["sizes"]
-        self.colors = config["colors"]
 
         self.size_values = [v for x in self.sizes for v in x.values()]
 
@@ -82,8 +80,67 @@ class Task:
             self.prolog_interpreter = None
             self.prolog_check = False
 
+        self.shape_templates = self._generate_shapes()
+
         self.dirty = True # Dirty bit, if False a call to self.reset() does nothing.
         self.reset()
+
+    def _generate_shapes(self):
+        templates = {}
+
+        size = min(self.canvas_size)
+
+        for s, v in self.shapes.items():
+            bitmap = Image.new('L', self.canvas_size, 0)
+            draw = ImageDraw.Draw(bitmap)
+            if v["type"] == "ellipse":
+                n = float(v["n"])
+                bounding_box = (
+                    (self.canvas_size[0] / 2 - size / 2, self.canvas_size[1] / 2 - size / (2 * n)),
+                    (self.canvas_size[0] / 2 + size / 2, self.canvas_size[1] / 2 + size / (2 * n)))
+                a = int(v["rot"])
+                if a == 0:
+                    draw.ellipse(bounding_box, fill=255, outline=None)
+                else:
+                    tmp_bitmap = Image.new('L', self.canvas_size, 0)
+                    tmp_draw = ImageDraw.Draw(tmp_bitmap)
+                    tmp_draw.ellipse(bounding_box, fill=255, outline=None)
+                    tmp_bitmap = tmp_bitmap.rotate(a,
+                                                   resample=Image.Resampling.BICUBIC)  # Lanczos not possible for rotations.
+                    bitmap.paste(tmp_bitmap, mask=tmp_bitmap)
+            elif v["type"] == "polygon":
+                xy = []
+                n = int(v["n"])
+                t = 2 * np.pi / n
+                a = int(v["rot"]) * np.pi / 180
+                for i in range(n + 1):
+                    xy.append(
+                        (self.canvas_size[0] / 2 + size / 2 * np.cos(t * i + a),
+                         self.canvas_size[1] / 2 + size / 2 * np.sin(t * i + a))
+                    )
+                draw.polygon(xy, fill=255, outline=None)
+            elif v["type"] == "star": # For stars, odd vertexes are at distance r (size / 2), while even vertexes are at distance r/2 (size / 4).
+                xy = []
+                n = int(v["n"])
+                t = np.pi / n
+                a = int(v["rot"]) * np.pi / 180
+                for i in range(2 * n + 1):
+                    if i % 2 == 1:
+                        xy.append(
+                            (self.canvas_size[0] / 2 + size / 2 * np.cos(t * i + a),
+                             self.canvas_size[1] / 2 + size / 2 * np.sin(t * i + a))
+                        )
+                    else:
+                        xy.append(
+                            (self.canvas_size[0] / 2 + size / 4 * np.cos(t * i + a),
+                             self.canvas_size[1] / 2 + size / 4 * np.sin(t * i + a))
+                        )
+                draw.polygon(xy, fill=255, outline=None)
+
+            templates[s] = bitmap
+
+        return templates
+
 
     # Loads a Swi-Prolog interpreter and executes a query. Since Swi-Prolog has a singleton database, each query requires cleaning up every predicate.
     # Creating a new interpreter for every sample is very inefficient, but for the case of shuffled curricula, it is the only way to avoid problems.
@@ -117,6 +174,15 @@ class Task:
         else:
             rnd = 0
         return max(1, size + rnd)
+
+    # Compute random (uniform) rotation noise.
+    def _get_rot_noise(self):
+        if self.rot_noise > 0:
+            rnd = self.rng.uniform(-max(360, self.rot_noise), max(360, self.rot_noise))
+        else:
+            rnd = 0
+        return rnd
+
 
     # colorsys requires lists, PIL requires #rrggbb strings. These utilities handle conversions.
 
@@ -176,31 +242,17 @@ class Task:
             canvas_size = (max(self.size_values) + self.size_noise, max(self.size_values) + self.size_noise)
 
         bitmap = Image.new('RGBA', canvas_size, (0, 0, 0, 0))
-        draw = ImageDraw.Draw(bitmap)
 
-        bounding_box = (
-            (canvas_size[0] / 2 - size / 2, canvas_size[1] / 2 - size / 2),
-            (canvas_size[0] / 2 + size / 2, canvas_size[1] / 2 + size / 2))
 
-        # PIL regular_polygon wants the coordinates of the inscribed circle, making polygons too large for the canvas size. Therefore we manually draw our own.
+        tmp = Image.new('RGBA', self.canvas_size, color=color)
+        tmp.putalpha(self.shape_templates[shape].getchannel('L'))
 
-        if shape == "circle":
-            draw.ellipse(bounding_box, fill=color, outline=None)
-        elif shape == "triangle":
-            xy = ((canvas_size[0] / 2 + size / 2 * np.cos(2 * np.pi / 3 * 0 - np.pi / 2),
-                   canvas_size[1] / 2 + size / 2 * np.sin(2 * np.pi / 3 * 0 - np.pi / 2)),
-                  (canvas_size[0] / 2 + size / 2 * np.cos(2 * np.pi / 3 * 1 - np.pi / 2),
-                   canvas_size[1] / 2 + size / 2 * np.sin(2 * np.pi / 3 * 1 - np.pi / 2)),
-                  (canvas_size[0] / 2 + size / 2 * np.cos(2 * np.pi / 3 * 2 - np.pi / 2),
-                   canvas_size[1] / 2 + size / 2 * np.sin(2 * np.pi / 3 * 2 - np.pi / 2))
-                  )
-            draw.polygon(xy, fill=color, outline=None)
-        elif shape == "square":
-            xy = ((canvas_size[0] / 2 - size / 2, canvas_size[1] / 2 - size / 2),
-                  (canvas_size[0] / 2 - size / 2, canvas_size[1] / 2 + size / 2),
-                  (canvas_size[0] / 2 + size / 2, canvas_size[1] / 2 + size / 2),
-                  (canvas_size[0] / 2 + size / 2, canvas_size[1] / 2 - size / 2))
-            draw.polygon(xy, fill=color, outline=None)
+        if self.rot_noise > 0:
+            tmp = tmp.rotate(self._get_rot_noise(), resample=Image.Resampling.BICUBIC)
+
+        tmp = tmp.resize((int(size), int(size)), resample=Image.Resampling.LANCZOS)
+        bitmap.paste(tmp, (int(canvas_size[0] / 2 - size / 2), int(canvas_size[1] / 2 - size / 2)), mask=tmp)
+
 
         return bitmap
 
@@ -600,9 +652,9 @@ class Task:
             if len(operators) == 0:
 
                 if symbol["shape"] is None:
-                    out["shape"] = self.rng.choice(self.shapes)
+                    out["shape"] = self.rng.choice(self.shape_names)
                 elif symbol["shape"].startswith("not_"):
-                    out["shape"] = self.rng.choice(list(set(self.shapes) - {symbol["shape"][4:]}))
+                    out["shape"] = self.rng.choice(list(set(self.shape_names) - {symbol["shape"][4:]}))
                 else:
                     out["shape"] = self.rng.choice(symbol["shape"].split("|"))
 
@@ -776,7 +828,7 @@ class Task:
                 if "shape" in x.keys():
                     score += sorting_weights["n"] * 1
 
-                    score += sorting_weights["shape"] * (self.shapes.index(x["shape"]) + 1)
+                    score += sorting_weights["shape"] * (self.shape_names.index(x["shape"]) + 1)
                     for i, y in enumerate(self.colors):
                         if x["color"] in y.keys():
                             score += sorting_weights["color"] * (i + 1)
@@ -856,11 +908,11 @@ class Task:
 
             if x["shape"] is None:
                 if i == 0:
-                    tmp_shape = self.shapes
+                    tmp_shape = self.shape_names
                 else:
                     tmp_shape = []
             elif x["shape"].startswith("not_"):
-                tmp_shape = set(self.shapes) - {x["shape"][4:]}
+                tmp_shape = set(self.shape_names) - {x["shape"][4:]}
             else:
                 tmp_shape = x["shape"].split("|")
 
@@ -926,9 +978,9 @@ class Task:
             assert "shape" in x, "intersection() operator can only process atomic shapes."
 
             if x["shape"] is None:
-                tmp_shape = self.shapes
+                tmp_shape = self.shape_names
             elif x["shape"].startswith("not_"):
-                tmp_shape = set(self.shapes) - {x["shape"][4:]}
+                tmp_shape = set(self.shape_names) - {x["shape"][4:]}
             else:
                 tmp_shape = x["shape"].split("|")
 
@@ -989,11 +1041,11 @@ class Task:
 
             if x["shape"] is None:
                 if i == 0:
-                    tmp_shape = self.shapes
+                    tmp_shape = self.shape_names
                 else:
                     tmp_shape = []
             elif x["shape"].startswith("not_"):
-                tmp_shape = set(self.shapes) - {x["shape"][4:]}
+                tmp_shape = set(self.shape_names) - {x["shape"][4:]}
             else:
                 tmp_shape = x["shape"].split("|")
 
@@ -1060,11 +1112,11 @@ class Task:
 
             if x["shape"] is None:
                 if i == 0:
-                    tmp_shape = self.shapes
+                    tmp_shape = self.shape_names
                 else:
                     tmp_shape = []
             elif x["shape"].startswith("not_"):
-                tmp_shape = set(self.shapes) - {x["shape"][4:]}
+                tmp_shape = set(self.shape_names) - {x["shape"][4:]}
             else:
                 tmp_shape = x["shape"].split("|")
 
@@ -1280,10 +1332,9 @@ class CurriculumGenerator:
         self.config = {}
 
         # Hard-coded settings which would require rewriting functions.
-        self.config["shapes"] = ["circle", "triangle", "square"]
         self.config["mandatory_keys"] = {"name": str, "beta": float, "gamma": float, "samples": int,
                                          "train_split": float, "val_split": float, "noisy_color": bool,
-                                         "noisy_size": bool, "positive_set": list, "negative_set": list}
+                                         "noisy_size": bool, "rot_noise": int, "positive_set": list, "negative_set": list}
         self.config["list_operators"] = {"sample": {"n": int}, "pick": {"n": int}, "first": {"n": int},
                                          "last": {"n": int},
                                          "permute": {}, "random_shift": {}, "shift": {"n": int}, "sort": {"order": str, "keys": list},
@@ -1389,6 +1440,18 @@ class CurriculumGenerator:
                 assert re.match("^#[0-9a-f]{6}$", v,
                                 flags=re.IGNORECASE) is not None, "{} must be an #rrggbb color, found {}.".format(k, v)
 
+        assert "shapes" in config, "Missing mandatory key shapes."
+        assert isinstance(config["shapes"], list), "shapes must be a list, found {}.".format(type(config["shapes"]))
+        assert len(config["shapes"]) > 0, "shapes must have at least one element."
+        for x in config["shapes"]:
+            assert isinstance(x, dict), "Elements of shapes must be a dict, found {}.".format(type(x))
+            assert len(x.keys()) == 1, "Elements of shapes must have a single key-value pair, found {}.".format(x)
+            for v in x.values():
+                assert len(set(v.keys()).symmetric_difference(set(["type", "n", "rot"]))) == 0, "A shape must be characterized by: type, n, rot. Found {}.".format(x.values())
+                assert v["type"] in ["polygon", "star", "ellipse"], "Allowed types for shapes are [polygon, star, ellipse], found {}.".format(v["type"])
+                assert int(v["n"]) > 0, "n must be greater than 0. n = number of sides for polygons, n = number of points for stars, n = (integer) ratio between major and minor axis for ellipses."
+                assert float(v["rot"]) >= 0 or float(v["rot"]) < 360, "rot must be between 0 (included) and 360 (excluded), found {}.".format(v["rot"])
+
         if "background_knowledge" in config:
             assert isinstance(config["background_knowledge"], str), "Optional parameter background_knowledge should be a string, {} found.".format(type(config["background_knowledge"]))
             assert os.path.isfile(config["background_knowledge"]), "File {} does not exist.".format(config["background_knowledge"])
@@ -1396,7 +1459,6 @@ class CurriculumGenerator:
     # Wrapper for recursive validation of a curriculum YAML file.
     def validate_curriculum(self, curriculum):
         assert isinstance(curriculum, list), "The curriculum must be a list of tasks."
-
         for i, t in enumerate(curriculum):
             assert isinstance(t, dict), "Task {} is not a dictionary.".format(i)
 
@@ -1421,12 +1483,12 @@ class CurriculumGenerator:
             if sample_set["shape"] is None:  # Any value.
                 ok = True
             elif sample_set["shape"].startswith("not_"):  # Negation.
-                ok = sample_set["shape"][4:] in self.config["shapes"]
+                ok = sample_set["shape"][4:] in self.config["shape_names"]
             else:  # Disjunction or single value.
                 tmp = sample_set["shape"].split("|")
                 ok = True
                 for i in tmp:
-                    ok = ok and i in self.config["shapes"]
+                    ok = ok and i in self.config["shape_names"]
 
             assert ok, "Invalid shape. Found {}.".format(sample_set["shape"])
 
@@ -1512,6 +1574,8 @@ class CurriculumGenerator:
         self.config["bg_color"] = config["bg_color"]
         self.config["colors"] = config["colors"]
         self.config["sizes"] = config["sizes"]
+        self.config["shapes"] = {list(x.keys())[0]: list(x.values())[0] for x in config["shapes"]} # For rendering.
+        self.config["shape_names"] = [list(x.keys())[0] for x in config["shapes"]] # For validation and sorting.
         self.config["size_noise"] = int(config["size_noise"])
         self.config["h_sigma"] = max(0.0, float(config["h_sigma"]))
         self.config["s_sigma"] = max(0.0, float(config["s_sigma"]))

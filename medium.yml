@@ -7,6 +7,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
    valid(C) :- shape(SH), forall(contains(C, C1), (contains(C1, C2), extract_shape(C2, SH))).
 
@@ -64,6 +65,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- color(CO), forall(contains(C, C1), (contains(C1, C2), extract_color(C2, CO))).
 
@@ -124,6 +126,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- shape(SH), forall(contains(C, C1), (contains(C1, C2), extract_shape(C2, SH))).
     valid(C) :- color(CO), forall(contains(C, C1), (contains(C1, C2), extract_color(C2, CO))).

@@ -7,6 +7,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 2), same_color(_, L).
 
@@ -43,6 +44,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 2), same_shape(_, L).
 
@@ -75,6 +77,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 3), same_color(_, L).
 
@@ -104,6 +107,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     valid(C) :- contains(C, C1), extract_children(C1, L), length(L, 3), same_shape(_, L).
 
@@ -133,6 +137,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), house(C1).
 
@@ -172,6 +177,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), car(C1).
 
@@ -209,6 +215,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), tower(C1).
 
@@ -257,6 +264,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), wagon(C1).
 
@@ -298,6 +306,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), traffic_light(C1).
 
@@ -338,6 +347,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
    valid(C) :- shape(SH), forall(contains(C, C1), (contains(C1, C2), extract_shape(C2, SH))).
 
@@ -389,6 +399,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- color(CO), forall(contains(C, C1), (contains(C1, C2), extract_color(C2, CO))).
 
@@ -441,6 +452,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- named_object(X), forall(contains(C, C1), (contains(C1, C2), is_named_object(C2, X))).
     
@@ -498,6 +510,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     valid(C) :- extract_children(C, L), reverse(L, L).
 
@@ -528,6 +541,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     pseudo_palindrome([]).
     pseudo_palindrome([_]).
@@ -571,6 +585,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     
     pseudo_palindrome2([]).
@@ -621,6 +636,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     valid(C) :- extract_children(C, L), length(L, N), odd(N), same_color(_, L).
     valid(C) :- extract_children(C, L), length(L, N), even(N), same_shape(_, L).
@@ -695,6 +711,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     tmp(C) :- contains(C, C1), is_named_object(C1, traffic_light).
     tmp2(C) :- contains(C, C2), is_named_object(C2, house).
@@ -774,6 +791,7 @@
   val_split: 0.1
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: |-
     tmp(C) :- contains(C, C1), is_named_object(C1, traffic_light).
     tmp2(C) :- contains(C, C2), is_named_object(C2, house).

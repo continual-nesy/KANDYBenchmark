@@ -10,8 +10,20 @@ colors: # Lists, so they can be sorted. Keys should be unique.
   - blue: "#0000ff"
   - magenta: "#ff00ff"
 sizes:
-  - small: 7
+  - small: 7  # NOTE: When using additional shapes, this is too small to discriminate them!
   - large: 15
+shapes: # Lists, so they can be sorted. Keys should be unique.
+  - circle: { type: ellipse, n: 1, rot: 0 }
+  #- ellipse_v: {type: ellipse, n: 2, rot: 90}
+  #- ellipse_h: {type: ellipse, n: 2, rot: 0}
+  - triangle: {type: polygon, n: 3, rot: 270}
+  #- down_triangle: {type: polygon, n: 3, rot: 90}
+  - square: {type: polygon, n: 4, rot: 45}
+  #- diamond: {type: polygon, n: 4, rot: 0}
+  #- pentagon: {type: polygon, n: 5, rot: 270}
+  #- star_5: {type: star, n: 5, rot: 90}
+  #- hexagon: {type: polygon, n: 6, rot: 0}
+  #- star_6: {type: star, n: 6, rot: 0}
 size_noise: 2
 h_sigma: 0.01
 s_sigma: 0.2

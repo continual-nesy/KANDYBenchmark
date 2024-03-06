@@ -7,6 +7,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_shape(C1, triangle).
 
@@ -25,6 +26,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_shape(C1, square).
 
@@ -43,6 +45,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_shape(C1, circle).
 
@@ -62,6 +65,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_color(C1, red).
 
@@ -81,6 +85,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_color(C1, green).
 
@@ -100,6 +105,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_color(C1, blue).
 
@@ -119,6 +125,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_color(C1, cyan).
 
@@ -138,6 +145,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_color(C1, magenta).
 
@@ -157,6 +165,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), extract_color(C1, yellow).
 
@@ -176,6 +185,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- extract_children(C, L), last(L, C1), extract_shape(C1, triangle), extract_color(C1, red).
 
@@ -201,6 +211,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- extract_children(C, L), last(L, C1), extract_shape(C1, triangle), extract_color(C1, red).
 
@@ -238,6 +249,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- extract_children(C, L), last(L, C1), member(C2, L), extract_shape(C1, triangle), extract_color(C1, red), extract_shape(C2, circle).
 
@@ -304,6 +316,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- extract_children(C, L), last(L, C1), member(C2, L), extract_shape(C1, triangle), extract_color(C1, red), extract_color(C2, blue).
 
@@ -370,6 +383,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- recursive_contains(C, C1), recursive_contains(C, C2), same_color(_, [C1, C2]), extract_shape(C1, triangle), extract_shape(C2, square).
 
@@ -443,6 +457,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- extract_children(C, L), reverse(L, L).
 
@@ -466,6 +481,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), house(C1).
     
@@ -495,6 +511,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), car(C1).
 
@@ -528,6 +545,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), tower(C1).
 
@@ -568,6 +586,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), wagon(C1).
 
@@ -608,6 +627,7 @@
   val_split: 0.25
   noisy_color: True
   noisy_size: True
+  rot_noise: 0
   positive_rule: >-
     valid(C) :- contains(C, C1), traffic_light(C1).
 
