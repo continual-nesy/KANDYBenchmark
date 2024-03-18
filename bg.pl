@@ -6,42 +6,32 @@ color(magenta).
 color(yellow).
 
 shape(triangle).
+shape(downtriangle).
+shape(diamond).
 shape(square).
 shape(circle).
-
-% shape(down_triangle).
-% shape(diamond).
-% shape(pentagon).
-% shape(star_5).
-% shape(hexagon).
-% shape(star_6).
-% shape(ellipse_v).
-% shape(ellipse_h).
-
-% polygon(triangle).
-% polygon(down_triangle).
-% polygon(square).
-% polygon(diamond).
-% polygon(pentagon).
-% polygon(hexagon).
-% star(star_5).
-% star(star_6).
-% ellipse(circle).
-% ellipse(ellipse_v).
-% ellipse(ellipse_h).
-
-% sides(triangle, 3).
-% sides(down_triangle, 3).
-% sides(square, 4).
-% sides(diamond, 4).
-% sides(pentagon, 5).
-% sides(star_5, 5).
-% sides(hexagon, 6).
-% sides(star_6, 6).
-
+shape(ellipsev).
+shape(ellipseh).
 
 size(small).
+size(medium).
 size(large).
+
+primary_color(red).
+primary_color(green).
+primary_color(blue).
+secondary_color(C) :- color(C), not(primary_color(C)).
+
+round_shape(circle).
+round_shape(ellipse_h).
+round_shape(ellipse_v).
+polygon_shape(S) :- shape(S), not(round_shape(S)).
+
+three_side(triangle).
+three_side(down_triangle).
+four_side(square).
+four_side(diamond).
+
 
 non_diag(stack).
 non_diag(side_by_side).
@@ -75,21 +65,84 @@ any_composition(random).
 line(X) :- non_diag(X), X \= grid.
 line(X) :- diag(X).
 
-house(C) :- extract_op_and_chld(C, stack, [C1, C2]), extract_shape(C1, triangle), extract_shape(C2, square), same_size(_, [C1, C2]).
-car(C) :- extract_op_and_chld(C, side_by_side, [C1, C2]), extract_shape(C1, circle), extract_shape(C2, circle), same_size(_, [C1, C2]), same_color(_, [C1, C2]).
-tower(C) :- extract_op_and_chld(C, stack, L), same_shape(square, L), same_size(_, L), length(L, N), N >= 2, N =< 3.
-wagon(C) :- extract_op_and_chld(C, side_by_side, L), same_shape(square, L), same_size(_, L), length(L, N), N >= 2, N =< 3.
-traffic_light(C) :- extract_op_and_chld(C, stack, [C1, C2, C3]), same_shape(circle, [C1, C2, C3]), same_size(_, [C1, C2, C3]), extract_color(C1, red), extract_color(C2, yellow), extract_color(C3, green).
-named_object(house).
-named_object(car).
-named_object(tower).
-named_object(wagon).
-named_object(traffic_light).
-is_named_object(C, house) :- house(C).
-is_named_object(C, car) :- car(C).
-is_named_object(C, tower) :- tower(C).
-is_named_object(C, wagon) :- wagon(C).
-is_named_object(C, traffic_light) :- traffic_light(C).
+hierarchical_same_color(CO, [H]) :- atom(H), extract_color(H, CO).
+hierarchical_same_color(CO, [H]) :- extract_children(H, L), hierarchical_same_color(CO, L).
+hierarchical_same_color(CO, [H|T]) :- atom(H), extract_color(H, CO), hierarchical_same_color(CO, T).
+hierarchical_same_color(CO, [H|T]) :- extract_children(H, L), hierarchical_same_color(CO, L), hierarchical_same_color(CO, T).
+
+hierarchical_same_size(SZ, [H]) :- atom(H), extract_size(H, SZ).
+hierarchical_same_size(SZ, [H]) :- extract_children(H, L), hierarchical_same_size(SZ, L).
+hierarchical_same_size(SZ, [H|T]) :- atom(H), extract_size(H, SZ), hierarchical_same_size(SZ, T).
+hierarchical_same_size(SZ, [H|T]) :- extract_children(H, L), hierarchical_same_size(SZ, L), hierarchical_same_size(SZ, T).
+
+hierarchical_object(C, COL, SZ) :- extract_children(C, L), hierarchical_same_color(COL, L), hierarchical_same_size(SZ, L).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2-level hierarchies
+
+% stack: triangle, square
+obj1(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, triangle), extract_shape(C2, square).
+
+% horizontal sequence of squares
+obj2(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side, side_by_side_reduce_bb]), same_shape(square, L), length(L, N), N >= 2, N =< 5.
+
+% vertical sequence of squares
+obj3(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [stack, stack_reduce_bb]), same_shape(square, L), length(L, N), N >= 2, N =< 5.
+
+% diagonal sequence of diamonds
+obj4(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [diag_ul_lr, diag_ll_ur]), same_shape(diamond, L), length(L, N), N >= 2, N =< 5.
+
+% stack: square down triangle
+obj5(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, square), extract_shape(C2, down_triangle).
+
+% stack: triangle, down triangle
+obj6(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, triangle), extract_shape(C2, down_triangle).
+
+% sequence of circles
+obj7(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side, side_by_side_reduce_bb, stack, stack_reduce_bb, diag_ul_lr, diag_ll_ur]), same_shape(circle, L), length(L, N), N >= 2, N =< 5.
+
+% horizontal sequence of ellipses (same direction)
+obj8(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side_reduce_bb, side_by_side]), same_shape(SH, L), member(SH, [ellipse_h, ellipse_v]), length(L, N), N >= 2, N =< 5.
+
+% stack: ellipse_v, circle, ellipse_h
+obj9(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2, C3]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, ellipse_v), extract_shape(C2, circle), extract_shape(C3, ellipse_h).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+same_object(O, [O]).
+same_object(O, [O|T]) :- same_object(O, T).
+
+halve_list(L, A, B) :- length(L, N), H is N // 2, length(A, H), append(A, [_|B], L).
+
+% 3-level hierarchies
+% horizontal sequence of squares, the central element is an obj1
+obj10(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side, side_by_side_reduce_bb]), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, O1), dropmiddle(L, L1), obj1(O1), same_shape(square, L1).
+
+% horizontal sequence of obj1
+obj11(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side, side_by_side_reduce_bb]), length(L, N), N >= 2, N =< 5, same_object(O, L), obj1(O).
+
+% cross of squares (combination of obj2 and obj3)
+obj12(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, side_by_side, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, stack, L1), length(L1, N), same_shape(square, L1), dropmiddle(L, L2), same_shape(square, L2).
+
+% diagonal cross of diamonds (combination of 2 obj4) NO!
+%obj13(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, diag_ul_lr, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, diag_ll_ur, L1), length(L1, N), same_shape(diamond, L1), dropmiddle(L, L2), same_shape(diamond, L2).
+
+% horizontal sequence of obj1, obj5 and obj6 such as obj6 appears only once in the middle, and obj1 appears only on the left (right respectively) side while obj5 appears only on the right (left respectively) side of obj6.
+obj14(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side, side_by_side_reduce_bb]), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), obj6(C1), halve_list(L, L1, L2), same_object(O1, L1), same_object(O2, L2), obj1(O1), obj5(O2).
+obj14(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side, side_by_side_reduce_bb]), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), obj6(C1), halve_list(L, L1, L2), same_object(O1, L1), same_object(O2, L2), obj5(O1), obj1(O2).
+
+% cross/diagonal cross of circles
+obj15(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, side_by_side, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, stack, L1), length(L1, N), same_shape(circle, L1), dropmiddle(L, L2), same_shape(circle, L2).
+%obj15(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, diag_ul_lr, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, diag_ll_ur, L1), length(L1, N), same_shape(circle, L1), dropmiddle(L, L2), same_shape(circle, L2).
+
+% cross of ellipses, vertical arm contains only vertical ellipses, horizontal arm (except central element) contains only horizontal ellipses
+obj16(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, side_by_side, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, ellipse_v, L1), length(L1, N), same_shape(circle, L1), dropmiddle(L, L2), same_shape(ellipse_h, L2).
+
+% obj9 where the bottom element is replaced by an horizontal sequence of horizontal ellipses (obj8)
+obj17(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, stack, [C1, C2, C3]), extract_shape(C1, ellipse_v), extract_shape(C2, circle), extract_op_and_chld(C3, side_by_side, L), length(L, N), N >= 2, N =< 5, same_shape(ellipse_h, L).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 shape_props(T, SH, CO, SZ) :- atom(T), term_string(T, S), split_string(S, "_", "", L), L = [SH, CO, SZ].
 extract_shape(T, SH) :- shape_props(T, SH1, _, _), term_string(SH, SH1), shape(SH).
@@ -144,14 +197,6 @@ all_same(H, [H]).
 all_same(H, [H|T]) :- all_same(H, T).
 
 
-expand2([A, B], A, B).
-expand4([A, B, C, D], A, B, C, D).
-expand8([A, B, C, D, E, F, G, H], A, B, C, D, E, F, G, H).
-expand9([A, B, C, D, E, F, G, H, I], A, B, C, D, E, F, G, H, I).
-odd(N) :- N mod 2 =:= 1.
-even(N) :- N mod 2 =:= 0.
-
-
 first([H|_],H).
 
 last([H], H).
@@ -163,13 +208,8 @@ droplast([_], []).
 droplast([H|T], [H|T2]):- droplast(T, T2).
 
 middle([_|T], T2):- droplast(T, T2).
-getmiddle(L, X) :- length(L, N), odd(N), N1 is div(N, 2), nth0(N1, L, X).
+getmiddle(L, X) :- length(L, N), N mod 2 =:= 1, N1 is div(N, 2), nth0(N1, L, X).
 dropmiddle(L, L1) :- getmiddle(L, X), delete(L, X, L1).
-
-
-less_eq(N, N1) :- N =< N1.
-less(N, N1) :- N < N1.
-greater(N, N1) :- N > N1.
 
 same(X, Y) :- X = Y.
 different(X, Y) :- X \= Y.

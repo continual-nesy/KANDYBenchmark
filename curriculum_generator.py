@@ -178,7 +178,7 @@ class Task:
     # Compute random (uniform) rotation noise.
     def _get_rot_noise(self):
         if self.rot_noise > 0:
-            rnd = self.rng.uniform(-max(360, self.rot_noise), max(360, self.rot_noise))
+            rnd = self.rng.uniform(-min(360, self.rot_noise), min(360, self.rot_noise))
         else:
             rnd = 0
         return rnd
@@ -250,7 +250,7 @@ class Task:
         if self.rot_noise > 0:
             tmp = tmp.rotate(self._get_rot_noise(), resample=Image.Resampling.BICUBIC)
 
-        tmp = tmp.resize((int(size), int(size)), resample=Image.Resampling.LANCZOS)
+        tmp = tmp.resize((int(size), int(size)), resample=Image.Resampling.BICUBIC)
         bitmap.paste(tmp, (int(canvas_size[0] / 2 - size / 2), int(canvas_size[1] / 2 - size / 2)), mask=tmp)
 
 

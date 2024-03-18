@@ -20,7 +20,7 @@ if __name__ == "__main__":
     logger.addHandler(logging.StreamHandler())
     logger.setLevel(logging.DEBUG)
 
-    cg = CurriculumGenerator("config.yml", "hard.yml", logger=logger)
+    cg = CurriculumGenerator("config.yml", "hierarchies.yml", logger=logger)
 
     shutil.rmtree("samples", ignore_errors=True)
     os.makedirs("samples/shuffled_curriculum", exist_ok=True)
