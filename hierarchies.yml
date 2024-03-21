@@ -1,0 +1,2684 @@
+############################## Warmup 1 ###############################
+# Samples: 100
+# Shapes
+- name: There is a triangle pointing upwards in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, triangle).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: triangle, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: triangle, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_triangle, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_triangle, color: ~, size: ~ }
+- name: There is a triangle pointing downwards in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, downtriangle).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: downtriangle, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: downtriangle, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_downtriangle, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_downtriangle, color: ~, size: ~ }
+- name: There is a square in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, square).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: square, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: square, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_square, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_square, color: ~, size: ~ }
+- name: There is a diamond in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, diamond).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: diamond, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: diamond, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_diamond, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_diamond, color: ~, size: ~ }
+- name: There is a circle in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, circle).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: circle, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: circle, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_circle, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_circle, color: ~, size: ~ }
+- name: There is a vertical ellipse in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, ellipsev).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ellipsev, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ellipsev, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_ellipsev, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_ellipsev, color: ~, size: ~ }
+- name: There is a horizontal ellipse in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, ellipseh).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ellipseh, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ellipseh, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_ellipseh, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_ellipseh, color: ~, size: ~ }
+# Colors
+- name: There is a red object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, red).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ~, color: red, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ~, color: red, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: ~, color: not_red, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: not_red, size: ~ }
+- name: There is a green object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, green).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ~, color: green, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ~, color: green, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: ~, color: not_green, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: not_green, size: ~ }
+- name: There is a blue object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, blue).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ~, color: blue, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ~, color: blue, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: ~, color: not_blue, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: not_blue, size: ~ }
+- name: There is a cyan object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, cyan).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ~, color: cyan, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ~, color: cyan, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: ~, color: not_cyan, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: not_cyan, size: ~ }
+- name: There is a magenta object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, magenta).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ~, color: magenta, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ~, color: magenta, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: ~, color: not_magenta, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: not_magenta, size: ~ }
+- name: There is a yellow object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, yellow).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ~, color: yellow, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ~, color: yellow, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: ~, color: not_yellow, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: not_yellow, size: ~ }
+
+################ OPTION 1: Same size vs different size ################
+- name: A group of objects with the same size
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- extract_children(C, L), same_size(_, L).
+  positive_set:
+    - any_displacement:
+        - random_repeat_before:
+            min: 2
+            max: 5
+            list: &fixed_random_size # Usage: ... list: *fixed_random_size
+              - pick_before:
+                  n: 1
+                  list:
+                    - {shape: ~, color: ~, size: small}
+                    - {shape: ~, color: ~, size: medium}
+                    - {shape: ~, color: ~, size: large}
+  negative_set:
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: ~, size: ~ }
+# Sizes
+################    OPTION 2: Small medium large       ################
+#- name: There is a small object in the image
+#  gamma: 1.0
+#  beta: 1.0
+#  samples: 100
+#  train_split: 0.8
+#  val_split: 0.1
+#  noisy_color: True
+#  noisy_size: True
+#  rot_noise: 10
+#  positive_rule: >-
+#    valid(C) :- contains(C, C1), extract_size(C1, small).
+#  positive_set:
+#    - quadrant_or_center:
+#        - {shape: ~, color: ~, size: small}
+#    - any_displacement:
+#        - permute:
+#          - random_repeat_before:
+#              min: 1
+#              max: 4
+#              list:
+#                - {shape: ~, color: ~, size: ~}
+#          - {shape: ~, color: ~, size: small}
+#  negative_set:
+#    - quadrant_or_center:
+#        - { shape: ~, color: ~, size: not_small }
+#    - any_displacement:
+#          - random_repeat_before:
+#              min: 2
+#              max: 5
+#              list:
+#                - { shape: ~, color: ~, size: not_small }
+#- name: There is a medium object in the image
+#  gamma: 1.0
+#  beta: 1.0
+#  samples: 100
+#  train_split: 0.8
+#  val_split: 0.1
+#  noisy_color: True
+#  noisy_size: True
+#  rot_noise: 10
+#  positive_rule: >-
+#    valid(C) :- contains(C, C1), extract_size(C1, medium).
+#  positive_set:
+#    - quadrant_or_center:
+#        - {shape: ~, color: ~, size: medium}
+#    - any_displacement:
+#        - permute:
+#          - random_repeat_before:
+#              min: 1
+#              max: 4
+#              list:
+#                - {shape: ~, color: ~, size: ~}
+#          - {shape: ~, color: ~, size: medium}
+#  negative_set:
+#    - quadrant_or_center:
+#        - { shape: ~, color: ~, size: not_medium }
+#    - any_displacement:
+#          - random_repeat_before:
+#              min: 2
+#              max: 5
+#              list:
+#                - { shape: ~, color: ~, size: not_medium }
+#- name: There is a large object in the image
+#  gamma: 1.0
+#  beta: 1.0
+#  samples: 100
+#  train_split: 0.8
+#  val_split: 0.1
+#  noisy_color: True
+#  noisy_size: True
+#  rot_noise: 10
+#  positive_rule: >-
+#    valid(C) :- contains(C, C1), extract_size(C1, large).
+#  positive_set:
+#    - quadrant_or_center:
+#        - {shape: ~, color: ~, size: large}
+#    - any_displacement:
+#        - permute:
+#          - random_repeat_before:
+#              min: 1
+#              max: 4
+#              list:
+#                - {shape: ~, color: ~, size: ~}
+#          - {shape: ~, color: ~, size: large}
+#  negative_set:
+#    - quadrant_or_center:
+#        - { shape: ~, color: ~, size: not_large }
+#    - any_displacement:
+#          - random_repeat_before:
+#              min: 2
+#              max: 5
+#              list:
+#                - { shape: ~, color: ~, size: not_large }
+#######################################################################
+# Derived concepts
+- name: There is a round object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, SH), round_shape(SH).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: circle|ellipseh|ellipsev, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: circle|ellipseh|ellipsev, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: triangle|downtriangle|square|diamond, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: triangle|downtriangle|square|diamond, color: ~, size: ~ }
+- name: There is a three-sided object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, SH), three_side(SH).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: triangle|downtriangle, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: triangle|downtriangle, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: circle|ellipseh|ellipsev|square|diamond, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: circle|ellipseh|ellipsev|square|diamond, color: ~, size: ~ }
+- name: There is a four-sided object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, SH), four_side(SH).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: square|diamond, color: ~, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: square|diamond, color: ~, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: circle|ellipseh|ellipsev|triangle|downtriangle, color: ~, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: circle|ellipseh|ellipsev|triangle|downtriangle, color: ~, size: ~ }
+- name: There is a primary color object in the image
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_color(C1, CO), primary_color(CO).
+  positive_set:
+    - quadrant_or_center:
+        - {shape: ~, color: red|green|blue, size: ~}
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - {shape: ~, color: red|green|blue, size: ~}
+  negative_set:
+    - quadrant_or_center:
+        - { shape: ~, color: cyan|magenta|yellow, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: cyan|magenta|yellow, size: ~ }
+
+##############################  Task 1  ###############################
+# Samples: 200
+- name: There is a three-sided object or a blue one
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, SH), three_side(SH).
+    valid(C) :- contains(C, C1), extract_color(C1, blue).
+  positive_set:
+    - quadrant_or_center:
+        - pick:
+            n: 1
+            list:
+              - {shape: triangle|downtriangle, color: ~, size: ~}
+              - { shape: ~, color: blue, size: ~ }
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - pick:
+              n: 1
+              list:
+                - { shape: triangle|downtriangle, color: ~, size: ~ }
+                - { shape: ~, color: blue, size: ~ }
+  negative_set:
+    - quadrant_or_center:
+        - { shape: circle|ellipsev|ellipseh|square|diamond, color: not_blue, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: circle|ellipsev|ellipseh|square|diamond, color: not_blue, size: ~ }
+- name: There is a non-primary color or a diamond
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, diamond).
+    valid(C) :- contains(C, C1), extract_color(C1, CO), secondary_color(CO).
+  positive_set:
+    - quadrant_or_center:
+        - pick:
+            n: 1
+            list:
+              - {shape: diamond, color: ~, size: ~}
+              - { shape: ~, color: cyan|magenta|yellow, size: ~ }
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - pick:
+              n: 1
+              list:
+                - { shape: diamond, color: ~, size: ~ }
+                - { shape: ~, color: cyan|magenta|yellow, size: ~ }
+  negative_set:
+    - quadrant_or_center:
+        - { shape: not_diamond, color: red|green|blue, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_diamond, color: red|green|blue, size: ~ }
+- name: There is a primary color or a polygon
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, SH), polygon_shape(SH).
+    valid(C) :- contains(C, C1), extract_color(C1, CO), primary_color(CO).
+  positive_set:
+    - quadrant_or_center:
+        - pick:
+            n: 1
+            list:
+              - {shape: triangle|downtriangle|square|diamond, color: ~, size: ~}
+              - { shape: ~, color: red|green|blue, size: ~ }
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 4
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - pick:
+              n: 1
+              list:
+                - { shape: triangle|downtriangle|square|diamond, color: ~, size: ~ }
+                - { shape: ~, color: red|green|blue, size: ~ }
+  negative_set:
+    - quadrant_or_center:
+        - { shape: circle|ellipsev|ellipseh, color: cyan|magenta|yellow, size: ~ }
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: circle|ellipsev|ellipseh, color: cyan|magenta|yellow, size: ~ }
+- name: There are a red object and a four-sided shape
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, SH), four_side(SH), contains(C, C2), extract_color(C2, red).
+  positive_set:
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - { shape: square|diamond, color: ~, size: ~ }
+          - { shape: ~, color: red, size: ~ }
+  negative_set:
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: circle|ellipsev|ellipseh|triangle|downtriangle, color: not_red, size: ~ }
+- name: There are a primary-color object and a triangle
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, triangle), contains(C, C2), extract_color(C2, CO), primary_color(CO).
+  positive_set:
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - { shape: triangle, color: ~, size: ~ }
+          - { shape: ~, color: red|green|blue, size: ~ }
+  negative_set:
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_triangle, color: cyan|magenta|yellow, size: ~ }
+- name: There are a magenta object and a non-four-sided shape
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), extract_shape(C1, SH), not(four_side(SH)), contains(C, C2), extract_color(C2, magenta).
+  positive_set:
+    - any_displacement:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - {shape: ~, color: ~, size: ~}
+          - { shape: triangle|downtriangle|circle|ellipsev|ellipseh, color: ~, size: ~ }
+          - { shape: ~, color: magenta, size: ~ }
+  negative_set:
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: square|diamond, color: not_magenta, size: ~ }
+- name: Every object is either red or green
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    red_or_green(red).
+    red_or_green(green).
+    valid(C) :- forall(contains(C, C1), (extract_color(C1, CO), red_or_green(CO))).
+  positive_set:
+    - any_displacement:
+        - random_repeat_before:
+            min: 2
+            max: 5
+            list:
+              - {shape: ~, color: red|green, size: ~}
+  negative_set:
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: ~, color: blue|cyan|magenta|yellow, size: ~ }
+- name: Every object is either blue or a square
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    blue_or_square(C) :- extract_shape(C, square).
+    blue_or_square(C) :- extract_color(C, blue).
+    valid(C) :- forall(contains(C, C1), (blue_or_square(C1))).
+  positive_set:
+    - any_displacement:
+        - sample_before:
+            n: 2
+            list:
+              - { shape: ~, color: blue, size: ~ }
+              - { shape: square, color: ~, size: ~ }
+    - any_displacement:
+        - sample_before:
+            n: 3
+            list:
+              - { shape: ~, color: blue, size: ~ }
+              - { shape: square, color: ~, size: ~ }
+    - any_displacement:
+        - sample_before:
+            n: 4
+            list:
+              - { shape: ~, color: blue, size: ~ }
+              - { shape: square, color: ~, size: ~ }
+    - any_displacement:
+        - sample_before:
+            n: 5
+            list:
+              - { shape: ~, color: blue, size: ~ }
+              - { shape: square, color: ~, size: ~ }
+  negative_set:
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: not_square, color: not_blue, size: ~ }
+- name: Every object is either a primary color or not round
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    primary_or_not_round(C) :- extract_color(C, CO), primary_color(CO).
+    primary_or_not_round(C) :- extract_shape(C, SH), polygon_shape(SH).
+    valid(C) :- forall(contains(C, C1), (primary_or_not_round(C1))).
+  positive_set:
+    - any_displacement:
+      - sample_before:
+          n: 2
+          list:
+            - { shape: ~, color: red|green|blue, size: ~ }
+            - { shape: triangle|downtriangle|square|diamond, color: ~, size: ~ }
+    - any_displacement:
+      - sample_before:
+          n: 3
+          list:
+            - { shape: ~, color: red|green|blue, size: ~ }
+            - { shape: triangle|downtriangle|square|diamond, color: ~, size: ~ }
+    - any_displacement:
+      - sample_before:
+          n: 4
+          list:
+            - { shape: ~, color: red|green|blue, size: ~ }
+            - { shape: triangle|downtriangle|square|diamond, color: ~, size: ~ }
+    - any_displacement:
+      - sample_before:
+          n: 5
+          list:
+            - { shape: ~, color: red|green|blue, size: ~ }
+            - { shape: triangle|downtriangle|square|diamond, color: ~, size: ~ }
+  negative_set:
+    - any_displacement:
+          - random_repeat_before:
+              min: 2
+              max: 5
+              list:
+                - { shape: circle|ellipsev|ellipseh, color: cyan|magenta|yellow, size: ~ }
+############################## Warmup 2 ###############################
+# 100 samples
+- name: There is a composition of objects of same size and color
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), hierarchical_object(C1, _, _).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - any_line:
+              - random_repeat_before:
+                  min: 2
+                  max: 5
+                  list: &fixed_random_color_size
+                    - pick_before:
+                        n: 1
+                        list:
+                          - { shape: ~, color: red, size: small }
+                          - { shape: ~, color: green, size: small }
+                          - { shape: ~, color: blue, size: small }
+                          - { shape: ~, color: cyan, size: small }
+                          - { shape: ~, color: magenta, size: small }
+                          - { shape: ~, color: yellow, size: small }
+                          - { shape: ~, color: red, size: medium }
+                          - { shape: ~, color: green, size: medium }
+                          - { shape: ~, color: blue, size: medium }
+                          - { shape: ~, color: cyan, size: medium }
+                          - { shape: ~, color: magenta, size: medium }
+                          - { shape: ~, color: yellow, size: medium }
+                          - { shape: ~, color: red, size: large }
+                          - { shape: ~, color: green, size: large }
+                          - { shape: ~, color: blue, size: large }
+                          - { shape: ~, color: cyan, size: large }
+                          - { shape: ~, color: magenta, size: large }
+                          - { shape: ~, color: yellow, size: large }
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 2
+            max: 4
+            list:
+              - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+- name: There is a composition of a triangle on top of a square
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj1(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - stack: &obj1
+              - ground_together:
+                  props: { color: ~, size: ~ }
+                  list:
+                    - {shape: triangle, color: ~, size: ~}
+                    - {shape: square, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - stack:
+            - { shape: ~, color: ~, size: ~ }
+            - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - stack:
+              - { shape: triangle, color: ~, size: ~ }
+              - { shape: square, color: ~, size: ~ }
+- name: There is a composition consisting of horizontal squares
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj2(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - side_by_side: &obj2
+              - random_repeat:
+                  min: 2
+                  max: 5
+                  list:
+                    - {shape: square, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - side_by_side:
+            - random_repeat_before:
+                min: 2
+                max: 5
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - side_by_side:
+                - random_repeat_before:
+                    min: 2
+                    max: 5
+                    list:
+                      - { shape: square, color: ~, size: ~ }
+- name: There is a composition consisting of vertical squares
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj3(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - stack: &obj3
+              - random_repeat:
+                  min: 2
+                  max: 5
+                  list:
+                    - {shape: square, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - stack:
+            - random_repeat_before:
+                min: 2
+                max: 5
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - stack:
+                - random_repeat_before:
+                    min: 2
+                    max: 5
+                    list:
+                      - { shape: square, color: ~, size: ~ }
+- name: There is a composition consisting of diagonal diamonds
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj4(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - any_diag: &obj4
+              - random_repeat:
+                  min: 2
+                  max: 5
+                  list:
+                    - {shape: diamond, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_diag:
+            - random_repeat_before:
+                min: 2
+                max: 5
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - any_diag:
+                - random_repeat_before:
+                    min: 2
+                    max: 5
+                    list:
+                      - { shape: diamond, color: ~, size: ~ }
+- name: There is a composition of a square on top of a downward triangle
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj5(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - stack: &obj5
+              - ground_together:
+                  props: { color: ~, size: ~ }
+                  list:
+                    - {shape: square, color: ~, size: ~}
+                    - {shape: downtriangle, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - stack:
+            - { shape: ~, color: ~, size: ~ }
+            - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - stack:
+                - { shape: square, color: ~, size: ~ }
+                - { shape: downtriangle, color: ~, size: ~ }
+- name: There is a composition of a triangle on top of a downward triangle
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj6(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - stack: &obj6
+              - ground_together:
+                  props: { color: ~, size: ~ }
+                  list:
+                    - {shape: triangle, color: ~, size: ~}
+                    - {shape: downtriangle, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - stack:
+            - { shape: ~, color: ~, size: ~ }
+            - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - stack:
+                - { shape: triangle, color: ~, size: ~ }
+                - { shape: downtriangle, color: ~, size: ~ }
+- name: There is a composition consisting of aligned circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj7(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - any_line: &obj7
+              - random_repeat:
+                  min: 2
+                  max: 5
+                  list:
+                    - {shape: circle, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - random_repeat_before:
+                min: 2
+                max: 5
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 3
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - any_line:
+                - random_repeat_before:
+                    min: 2
+                    max: 5
+                    list:
+                      - { shape: circle, color: ~, size: ~ }
+- name: There is a composition consisting of horizontal ellipses with the same orientation
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj8(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - random_repeat_before:
+              min: 1
+              max: 3
+              list:
+                - any_line:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }
+          - side_by_side: &obj8
+              - random_repeat:
+                  min: 2
+                  max: 5
+                  list:
+                    - {shape: ellipsev|ellipseh, color: ~, size: ~}
+  negative_set:
+    - grid:
+        - random_repeat_before:
+            min: 1
+            max: 2
+            list:
+              - any_line:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - any_line:
+            - ground_together:
+                props: { color: ~, size: ~ }
+                list:
+                  - random_repeat_before:
+                      min: 2
+                      max: 5
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+        - side_by_side:
+            - random_repeat_before:
+                min: 2
+                max: 5
+                list:
+                  - { shape: ~, color: ~, size: ~ }
+    - grid:
+        - permute:
+            - random_repeat_before:
+                min: 1
+                max: 2
+                list:
+                  - any_line:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - any_line:
+                - ground_together:
+                    props: { color: ~, size: ~ }
+                    list:
+                      - random_repeat_before:
+                          min: 2
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+            - side_by_side:
+                - random_repeat_before:
+                    min: 2
+                    max: 5
+                    list:
+                      - { shape: ellipsev|ellipseh, color: ~, size: ~ }
+
+
+- name: There is a compositional object which is either an horizontal sequence of squares, a triangle on top of a downward triangle, or an horizontal sequence of ellipses with the same alignment
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj2(C1).
+    valid(C) :- contains(C, C1), obj6(C1).
+    valid(C) :- contains(C, C1), obj8(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - pick:
+              n: 1
+              list:
+                - side_by_side: *obj2
+                - stack: *obj6
+                - side_by_side: *obj8
+          - random_sample:
+              min: 1
+              max: 3
+              list:
+                - stack: *obj1
+                - side_by_side: *obj2
+                - stack: *obj3
+                - any_diag: *obj4
+                - stack: *obj5
+                - stack: *obj6
+                - any_line: *obj7
+                - side_by_side: *obj8
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              - stack: *obj1
+              #- side_by_side: *obj2
+              - stack: *obj3
+              - any_diag: *obj4
+              - stack: *obj5
+              #- stack: *obj6
+              - any_line: *obj7
+              #- side_by_side: *obj8
+
+- name: There is a compositional object which is either a triangle on top of a square, an horizontal sequence of squares, or a vertical sequence of squares
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj1(C1).
+    valid(C) :- contains(C, C1), obj2(C1).
+    valid(C) :- contains(C, C1), obj3(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - pick:
+              n: 1
+              list:
+                - stack: *obj1
+                - side_by_side: *obj2
+                - stack: *obj3
+          - random_sample:
+              min: 1
+              max: 3
+              list:
+                - stack: *obj1
+                - side_by_side: *obj2
+                - stack: *obj3
+                - any_diag: *obj4
+                - stack: *obj5
+                - stack: *obj6
+                - any_line: *obj7
+                - side_by_side: *obj8
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              #- stack: *obj1
+              #- side_by_side: *obj2
+              #- stack: *obj3
+              - any_diag: *obj4
+              - stack: *obj5
+              - stack: *obj6
+              - any_line: *obj7
+              - side_by_side: *obj8
+- name: There is a compositional object which is either a diagonal sequence of diamonds, a square above a downward triangle, or a line of circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj4(C1).
+    valid(C) :- contains(C, C1), obj5(C1).
+    valid(C) :- contains(C, C1), obj7(C1).
+  positive_set:
+    - grid:
+        - permute:
+          - pick:
+              n: 1
+              list:
+                - any_diag: *obj4
+                - stack: *obj5
+                - any_line: *obj7
+          - random_sample:
+              min: 1
+              max: 3
+              list:
+                - stack: *obj1
+                - side_by_side: *obj2
+                - stack: *obj3
+                - any_diag: *obj4
+                - stack: *obj5
+                - stack: *obj6
+                - any_line: *obj7
+                - side_by_side: *obj8
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              - stack: *obj1
+              - side_by_side: *obj2
+              - stack: *obj3
+              #- any_diag: *obj4
+              #- stack: *obj5
+              - stack: *obj6
+              #- any_line: *obj7
+              - side_by_side: *obj8
+
+##############################  Task 2  ###############################
+# 200 samples
+
+- name: There are two compositional objects which are a triangle above a square, and a line of circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj1(C1), contains(C, C2), obj7(C2).
+  positive_set:
+    - grid:
+        - permute:
+          - stack: *obj1
+          - any_line: *obj7
+          - random_sample:
+              min: 1
+              max: 2
+              list:
+                - stack: *obj1
+                - side_by_side: *obj2
+                - stack: *obj3
+                - any_diag: *obj4
+                - stack: *obj5
+                - stack: *obj6
+                - any_line: *obj7
+                - side_by_side: *obj8
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              #- stack: *obj1
+              - side_by_side: *obj2
+              - stack: *obj3
+              - any_diag: *obj4
+              - stack: *obj5
+              - stack: *obj6
+              #- any_line: *obj7
+              - side_by_side: *obj8
+- name: There are two compositional objects which are a diagonal of diamonds, and a a triangle on top of a downward triangle
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj4(C1), contains(C, C2), obj6(C2).
+  positive_set:
+    - grid:
+        - permute:
+          - any_diag: *obj4
+          - stack: *obj6
+          - random_sample:
+              min: 1
+              max: 2
+              list:
+                - stack: *obj1
+                - side_by_side: *obj2
+                - stack: *obj3
+                - any_diag: *obj4
+                - stack: *obj5
+                - stack: *obj6
+                - any_line: *obj7
+                - side_by_side: *obj8
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              - stack: *obj1
+              - side_by_side: *obj2
+              - stack: *obj3
+              #- any_diag: *obj4
+              - stack: *obj5
+              #- stack: *obj6
+              - any_line: *obj7
+              - side_by_side: *obj8
+
+- name: Every object is a composition of either a vertical stack of squares or a square on top of a downward triangle
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    obj3_or_obj5(C) :- obj3(C).
+    obj3_or_obj5(C) :- obj5(C).
+    valid(C) :- forall(contains(C, C1), (obj3_or_obj5(C1))).
+  positive_set:
+    - grid:
+        - random_sample_before:
+            min: 2
+            max: 4
+            list:
+              - stack: *obj3
+              - stack: *obj5
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              - stack: *obj1
+              - side_by_side: *obj2
+              - stack: *obj3
+              - any_diag: *obj4
+              - stack: *obj5
+              - stack: *obj6
+              - any_line: *obj7
+              - side_by_side: *obj8
+
+- name: Every object is a composition of either squares side by side, or a line of circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    obj2_or_obj7(C) :- obj2(C).
+    obj2_or_obj7(C) :- obj7(C).
+    valid(C) :- forall(contains(C, C1), (obj2_or_obj7(C1))).
+  positive_set:
+    - grid:
+        - random_sample_before:
+            min: 2
+            max: 4
+            list:
+              - side_by_side: *obj2
+              - any_line: *obj7
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              - stack: *obj1
+              - side_by_side: *obj2
+              - stack: *obj3
+              - any_diag: *obj4
+              - stack: *obj5
+              - stack: *obj6
+              - any_line: *obj7
+              - side_by_side: *obj8
+
+- name: Every object is a composition of either a downtriangle below a triangle, or ellipses with the same alignment side by side
+  gamma: 1.0
+  beta: 1.0
+  samples: 100
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    obj6_or_obj8(C) :- obj6(C).
+    obj6_or_obj8(C) :- obj8(C).
+    valid(C) :- forall(contains(C, C1), (obj6_or_obj8(C1))).
+  positive_set:
+    - grid:
+        - random_sample_before:
+            min: 2
+            max: 4
+            list:
+              - side_by_side: *obj8
+              - stack: *obj6
+  negative_set:
+    - grid:
+        - random_sample:
+            min: 2
+            max: 4
+            list:
+              - stack: *obj1
+              - side_by_side: *obj2
+              - stack: *obj3
+              - any_diag: *obj4
+              - stack: *obj5
+              - stack: *obj6
+              - any_line: *obj7
+              - side_by_side: *obj8
+############################## Warmup 3 ###############################
+# 200 samples
+- name: A composition consisting of a palindromic sequence of squares and a triangle on top of a square
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- obj10(C).
+  positive_set:
+    - side_by_side_reduce_bb: &obj10
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - palindrome_before:
+                  - random_repeat:
+                      min: 1
+                      max: 2
+                      list:
+                        - {shape: square, color: ~, size: ~}
+                  - stack:
+                      - {shape: triangle, color: ~, size: ~}
+                      - {shape: square, color: ~, size: ~}
+  negative_set:
+    - side_by_side_reduce_bb: &nega # Perceptually similar to obj10, obj11, obj14
+        - random_subset_ground_together:
+            props: { shape: ~, color: ~, size: ~ }
+            list:
+              - permute:
+                  - random_repeat_before:
+                      min: 2
+                      max: 4
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+                  - stack:
+                      - random_repeat_before:
+                          min: 1
+                          max: 2
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+    - side_by_side: &negb # Perceptually similar to obj12, 0bj15
+        - random_subset_ground_together:
+            props: { shape: ~, color: ~, size: ~ }
+            list:
+              - palindrome_before:
+                  - random_repeat_before:
+                      min: 1
+                      max: 2
+                      list:
+                        - { shape: ~, color: ~, size: ~ }
+                  - stack:
+                      - random_repeat_before:
+                          min: 3
+                          max: 5
+                          list:
+                            - { shape: ~, color: ~, size: ~ }
+    - stack: &negc # Perceptually similar to obj16, obj17
+        - random_subset_ground_together:
+            props: { shape: ~, color: ~, size: ~ }
+            list:
+              - random_repeat_before:
+                  min: 2
+                  max: 5
+                  list:
+                    - { shape: ~, color: ~, size: ~ }
+              - pick_before:
+                  n: 1
+                  list:
+                    - side_by_side:
+                        - repeat_before:
+                            n: 3
+                            list:
+                              - { shape: ~, color: ~, size: ~ }
+                    - side_by_side:
+                        - repeat_before:
+                            n: 5
+                            list:
+                              - { shape: ~, color: ~, size: ~ }
+- name: A composition consisting of a sequence of triangles on top of a squares
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- obj11(C).
+  positive_set:
+    - side_by_side_reduce_bb: &obj11
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - random_repeat:
+                  min: 2
+                  max: 5
+                  list:
+                    - stack:
+                      - {shape: triangle, color: ~, size: ~}
+                      - {shape: square, color: ~, size: ~}
+  negative_set:
+    - side_by_side_reduce_bb: *nega
+    - side_by_side: *negb
+    - stack: *negc
+- name: A composition consisting of a cross of squares
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- obj12(C).
+  positive_set:
+    - side_by_side: &obj12
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - palindrome_before:
+                - random_repeat_before:
+                    min: 1
+                    max: 2
+                    list:
+                      - {shape: square, color: ~, size: ~}
+                - stack:
+                    - random_repeat_before:
+                        min: 3
+                        max: 5
+                        list:
+                          - {shape: square, color: ~, size: ~}
+  negative_set:
+    - side_by_side_reduce_bb: *nega
+    - side_by_side: *negb
+    - stack: *negc
+
+- name: A composition consisting of a sequence of a central element with a triangle and a downward triangle, and the sides which are rotationally symmetric repetitions of a triangle above a square
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- obj14(C).
+  positive_set:
+    - side_by_side_reduce_bb: &obj14a
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - random_repeat:
+                  min: 1
+                  max: 2
+                  list:
+                    - stack:
+                      - {shape: triangle, color: ~, size: ~}
+                      - {shape: square, color: ~, size: ~}
+              - stack:
+                  - { shape: triangle, color: ~, size: ~ }
+                  - { shape: downtriangle, color: ~, size: ~ }
+              - random_repeat:
+                  min: 1
+                  max: 2
+                  list:
+                    - stack:
+                        - { shape: square, color: ~, size: ~ }
+                        - { shape: downtriangle, color: ~, size: ~ }
+    - side_by_side_reduce_bb: &obj14b
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - random_repeat:
+                  min: 1
+                  max: 2
+                  list:
+                    - stack:
+                        - { shape: square, color: ~, size: ~ }
+                        - { shape: downtriangle, color: ~, size: ~ }
+              - stack:
+                  - { shape: triangle, color: ~, size: ~ }
+                  - { shape: downtriangle, color: ~, size: ~ }
+              - random_repeat:
+                  min: 1
+                  max: 2
+                  list:
+                    - stack:
+                        - { shape: triangle, color: ~, size: ~ }
+                        - { shape: square, color: ~, size: ~ }
+  negative_set:
+    - side_by_side_reduce_bb: *nega
+    - side_by_side: *negb
+    - stack: *negc
+- name: A composition consisting of a cross of circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- obj15(C).
+  positive_set:
+    - side_by_side: &obj15
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - palindrome_before:
+                - random_repeat_before:
+                    min: 1
+                    max: 2
+                    list:
+                      - {shape: circle, color: ~, size: ~}
+                - stack:
+                    - random_repeat_before:
+                        min: 3
+                        max: 5
+                        list:
+                          - {shape: circle, color: ~, size: ~}
+  negative_set:
+    - side_by_side_reduce_bb: *nega
+    - side_by_side: *negb
+    - stack: *negc
+- name: A composition consisting of a T of circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- obj16(C).
+  positive_set:
+    - stack: &obj16
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - side_by_side:
+                - random_repeat_before:
+                    min: 3
+                    max: 5
+                    list:
+                      - {shape: circle, color: ~, size: ~}
+              - random_repeat_before:
+                  min: 2
+                  max: 4
+                  list:
+                    - {shape: circle, color: ~, size: ~}
+  negative_set:
+    - side_by_side_reduce_bb: *nega
+    - side_by_side: *negb
+    - stack: *negc
+- name: A composition consisting of an inverted T of ellipses with the same orientation
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- obj17(C).
+  positive_set:
+    - stack: &obj17
+        - ground_together:
+            props: { color: ~, size: ~ }
+            list:
+              - random_repeat_before:
+                  min: 2
+                  max: 4
+                  list:
+                    - { shape: ellipsev, color: ~, size: ~ }
+              - side_by_side:
+                - random_repeat_before:
+                    min: 3
+                    max: 5
+                    list:
+                      - {shape: ellipseh, color: ~, size: ~}
+  negative_set:
+    - side_by_side_reduce_bb: *nega
+    - side_by_side: *negb
+    - stack: *negc
+
+- name: There is a composition consisting of a palindromic sequence of squares and a triangle on top of a square or a cross of squares
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj10(C1).
+    valid(C) :- contains(C, C1), obj12(C1).
+  positive_set:
+    - any_diag:
+        - permute:
+            - pick:
+                n: 1
+                list:
+                  - side_by_side_reduce_bb: *nega
+                  - side_by_side: *negb
+                  - stack: *negc
+                  #- side_by_side_reduce_bb: *obj10
+                  - side_by_side_reduce_bb: *obj11
+                  #- side_by_side: *obj12
+                  - side_by_side_reduce_bb: *obj14a
+                  - side_by_side_reduce_bb: *obj14b
+                  - side_by_side: *obj15
+                  - stack: *obj16
+                  - stack: *obj17
+            - pick:
+                n: 1
+                list:
+                  - side_by_side_reduce_bb: *obj10
+                  - side_by_side: *obj12
+  negative_set:
+    - any_diag:
+        - sample:
+            n: 2
+            list:
+              - side_by_side_reduce_bb: *nega
+              - side_by_side: *negb
+              - stack: *negc
+              #- side_by_side_reduce_bb: *obj10
+              - side_by_side_reduce_bb: *obj11
+              #- side_by_side: *obj12
+              - side_by_side_reduce_bb: *obj14a
+              - side_by_side_reduce_bb: *obj14b
+              - side_by_side: *obj15
+              - stack: *obj16
+              - stack: *obj17
+
+- name: There is a composition consisting of a sequence of triangles above squares or a T of circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj11(C1).
+    valid(C) :- contains(C, C1), obj16(C1).
+  positive_set:
+    - any_diag:
+        - permute:
+            - pick:
+                n: 1
+                list:
+                  - side_by_side_reduce_bb: *nega
+                  - side_by_side: *negb
+                  - stack: *negc
+                  - side_by_side_reduce_bb: *obj10
+                  #- side_by_side_reduce_bb: *obj11
+                  - side_by_side: *obj12
+                  - side_by_side_reduce_bb: *obj14a
+                  - side_by_side_reduce_bb: *obj14b
+                  - side_by_side: *obj15
+                  #- stack: *obj16
+                  - stack: *obj17
+            - pick:
+                n: 1
+                list:
+                  - side_by_side_reduce_bb: *obj11
+                  - stack: *obj16
+  negative_set:
+    - any_diag:
+        - sample:
+            n: 2
+            list:
+              - side_by_side_reduce_bb: *nega
+              - side_by_side: *negb
+              - stack: *negc
+              - side_by_side_reduce_bb: *obj10
+              #- side_by_side_reduce_bb: *obj11
+              - side_by_side: *obj12
+              - side_by_side_reduce_bb: *obj14a
+              - side_by_side_reduce_bb: *obj14b
+              - side_by_side: *obj15
+              #- stack: *obj16
+              - stack: *obj17
+
+- name: There is a composition consisting of a a sequence of a central element with a triangle and a downward triangle and sides being rotationally symmetric repetitions of a triangle above a square, a cross of circles, or an inverted T of ellipses with the same orientation
+  gamma: 1.0
+  beta: 1.0
+  samples: 200
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    valid(C) :- contains(C, C1), obj14(C1).
+    valid(C) :- contains(C, C1), obj15(C1).
+    valid(C) :- contains(C, C1), obj17(C1).
+  positive_set:
+    - any_diag:
+        - permute:
+            - pick:
+                n: 1
+                list:
+                  - side_by_side_reduce_bb: *nega
+                  - side_by_side: *negb
+                  - stack: *negc
+                  - side_by_side_reduce_bb: *obj10
+                  - side_by_side_reduce_bb: *obj11
+                  - side_by_side: *obj12
+                  #- side_by_side_reduce_bb: *obj14a
+                  #- side_by_side_reduce_bb: *obj14b
+                  #- side_by_side: *obj15
+                  - stack: *obj16
+                  #- stack: *obj17
+            - pick:
+                n: 1
+                list:
+                  - side_by_side_reduce_bb: *obj14a
+                  - side_by_side_reduce_bb: *obj14b
+                  - side_by_side: *obj15
+                  - stack: *obj17
+  negative_set:
+    - any_diag:
+        - sample:
+            n: 2
+            list:
+              - side_by_side_reduce_bb: *nega
+              - side_by_side: *negb
+              - stack: *negc
+              - side_by_side_reduce_bb: *obj10
+              - side_by_side_reduce_bb: *obj11
+              - side_by_side: *obj12
+              #- side_by_side_reduce_bb: *obj14a
+              #- side_by_side_reduce_bb: *obj14b
+              #- side_by_side: *obj15
+              - stack: *obj16
+              #- stack: *obj17
+
+##############################  Task 3  ###############################
+# 300 samples
+
+- name: There are two compositions of primary colors of the same type, which is either a sequence of a central element with a triangle and a downward triangle, and the sides which are rotationally symmetric repetitions of a triangle above a square, or a T of circles
+  gamma: 1.0
+  beta: 1.0
+  samples: 300
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    same_obj14_or_obj16(C1, C2) :- obj14(C1), obj14(C2).
+    same_obj14_or_obj16(C1, C2) :- obj16(C1), obj16(C2).
+    valid(C) :- extract_children(C, [C1, C2]), same_obj14_or_obj16(C1, C2), hierarchical_object(C1, COL1, _), hierarchical_object(C2, COL2, _), primary_color(COL1), primary_color(COL2).
+  positive_set:
+    - any_diag:
+        - ground_together:
+            props: { color: red|green|blue }
+            list:
+            - repeat_before:
+                n: 2
+                list:
+                  - pick:
+                      n: 1
+                      list:
+                        #- side_by_side_reduce_bb: *nega
+                        #- side_by_side: *negb
+                        #- stack: *negc
+                        #- side_by_side_reduce_bb: *obj10
+                        #- side_by_side_reduce_bb: *obj11
+                        #- side_by_side: *obj12
+                        - side_by_side_reduce_bb: *obj14a
+                        - side_by_side_reduce_bb: *obj14b
+                        #- side_by_side: *obj15
+                        - stack: *obj16
+                        #- stack: *obj17
+  negative_set:
+    - any_diag:
+        - sample:
+            n: 2
+            list:
+#              - side_by_side_reduce_bb: *nega
+#              - side_by_side: *negb
+#              - stack: *negc
+              - side_by_side_reduce_bb: *obj10
+              - side_by_side_reduce_bb: *obj11
+              - side_by_side: *obj12
+              - side_by_side_reduce_bb: *obj14a
+              - side_by_side_reduce_bb: *obj14b
+              - side_by_side: *obj15
+              - stack: *obj16
+              - stack: *obj17
+    - any_diag:
+        - ground_together:
+            props: { color: cyan|magenta|yellow }
+            list:
+              - repeat_before:
+                  n: 2
+                  list:
+                    - pick:
+                        n: 1
+                        list:
+                          #- side_by_side_reduce_bb: *nega
+                          #- side_by_side: *negb
+                          #- stack: *negc
+                          #- side_by_side_reduce_bb: *obj10
+                          #- side_by_side_reduce_bb: *obj11
+                          #- side_by_side: *obj12
+                          - side_by_side_reduce_bb: *obj14a
+                          - side_by_side_reduce_bb: *obj14b
+                          #- side_by_side: *obj15
+                          - stack: *obj16
+                          #- stack: *obj17
+    - any_diag:
+        - ground_together:
+            props: { color: red|green|blue }
+            list:
+              - permute:
+                - pick:
+                    n: 1
+                    list:
+                      - side_by_side_reduce_bb: *obj14a
+                      - side_by_side_reduce_bb: *obj14b
+                - stack: *obj16
+
+- name: There are two compositions of the same size, such they are either of a sequence of triangles on top of squares, and an inverted T of ellipses
+  gamma: 1.0
+  beta: 1.0
+  samples: 300
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    obj11_or_obj17(C) :- obj11(C).
+    obj11_or_obj17(C) :- obj17(C).
+    
+    valid(C) :- extract_children(C, [C1, C2]), obj11_or_obj17(C1), obj11_or_obj17(C2), hierarchical_object(C1, _, SZ), hierarchical_object(C2, _, SZ).
+  positive_set:
+    - any_diag:
+        - ground_together:
+            props: { size: ~ }
+            list:
+              - sample:
+                  n: 2
+                  list:
+                    #- side_by_side_reduce_bb: *nega
+                    #- side_by_side: *negb
+                    #- stack: *negc
+                    #- side_by_side_reduce_bb: *obj10
+                    - side_by_side_reduce_bb: *obj11
+                    #- side_by_side: *obj12
+                    #- side_by_side_reduce_bb: *obj14a
+                    #- side_by_side_reduce_bb: *obj14b
+                    #- side_by_side: *obj15
+                    #- stack: *obj16
+                    - stack: *obj17
+  negative_set:
+    - any_diag:
+        - sample:
+            n: 2
+            list:
+#              - side_by_side_reduce_bb: *nega
+#              - side_by_side: *negb
+#              - stack: *negc
+              - side_by_side_reduce_bb: *obj10
+              - side_by_side_reduce_bb: *obj11
+              - side_by_side: *obj12
+              - side_by_side_reduce_bb: *obj14a
+              - side_by_side_reduce_bb: *obj14b
+              - side_by_side: *obj15
+              - stack: *obj16
+              - stack: *obj17
+
+- name: There are two hierarchical compositions of the same type
+  gamma: 1.0
+  beta: 1.0
+  samples: 300
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    three_level_obj(C) :- obj10(C).
+    three_level_obj(C) :- obj11(C).
+    three_level_obj(C) :- obj12(C).
+    three_level_obj(C) :- obj14(C).
+    three_level_obj(C) :- obj15(C).
+    three_level_obj(C) :- obj16(C).
+    three_level_obj(C) :- obj17(C).
+    
+    
+    valid(C) :- extract_children(C, [C1, C2]), three_level_obj(C1), three_level_obj(C2).
+  positive_set:
+    - any_diag:
+        - repeat_before:
+            n: 2
+            list:
+              - pick:
+                  n: 1
+                  list:
+                    #- side_by_side_reduce_bb: *nega
+                    #- side_by_side: *negb
+                    #- stack: *negc
+                    - side_by_side_reduce_bb: *obj10
+                    - side_by_side_reduce_bb: *obj11
+                    - side_by_side: *obj12
+                    - side_by_side_reduce_bb: *obj14a
+                    - side_by_side_reduce_bb: *obj14b
+                    - side_by_side: *obj15
+                    - stack: *obj16
+                    - stack: *obj17
+  negative_set:
+    - any_diag:
+        - pick:
+            n: 2
+            list:
+#              - side_by_side_reduce_bb: *nega
+#              - side_by_side: *negb
+#              - stack: *negc
+              - side_by_side_reduce_bb: *obj10
+              - side_by_side_reduce_bb: *obj11
+              - side_by_side: *obj12
+              - side_by_side_reduce_bb: *obj14a
+              - side_by_side_reduce_bb: *obj14b
+              - side_by_side: *obj15
+              - stack: *obj16
+              - stack: *obj17
+
+- name: There are two hierarchical compositions of the same type, sharing the same color
+  gamma: 1.0
+  beta: 1.0
+  samples: 300
+  train_split: 0.8
+  val_split: 0.1
+  noisy_color: True
+  noisy_size: True
+  rot_noise: 10
+  positive_rule: >-
+    three_level_obj(C) :- obj10(C).
+    three_level_obj(C) :- obj11(C).
+    three_level_obj(C) :- obj12(C).
+    three_level_obj(C) :- obj14(C).
+    three_level_obj(C) :- obj15(C).
+    three_level_obj(C) :- obj16(C).
+    three_level_obj(C) :- obj17(C).
+    
+    
+    valid(C) :- extract_children(C, [C1, C2]), three_level_obj(C1), three_level_obj(C2), hierarchical_object(C1, COL, _), hierarchical_object(C2, COL, _).
+  positive_set:
+    - any_diag:
+        - ground_together:
+            props: {color: ~}
+            list:
+            - repeat_before:
+                n: 2
+                list:
+                  - pick:
+                      n: 1
+                      list:
+                        #- side_by_side_reduce_bb: *nega
+                        #- side_by_side: *negb
+                        #- stack: *negc
+                        - side_by_side_reduce_bb: *obj10
+                        - side_by_side_reduce_bb: *obj11
+                        - side_by_side: *obj12
+                        - side_by_side_reduce_bb: *obj14a
+                        - side_by_side_reduce_bb: *obj14b
+                        - side_by_side: *obj15
+                        - stack: *obj16
+                        - stack: *obj17
+  negative_set:
+    - any_diag:
+        - pick:
+            n: 2
+            list:
+#              - side_by_side_reduce_bb: *nega
+#              - side_by_side: *negb
+#              - stack: *negc
+              - side_by_side_reduce_bb: *obj10
+              - side_by_side_reduce_bb: *obj11
+              - side_by_side: *obj12
+              - side_by_side_reduce_bb: *obj14a
+              - side_by_side_reduce_bb: *obj14b
+              - side_by_side: *obj15
+              - stack: *obj16
+              - stack: *obj17

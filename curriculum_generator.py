@@ -624,8 +624,22 @@ class Task:
                     elif op == "random_repeat_before":
                         out = self._expand_random_repeat(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["min"],
                                                          symbol[op]["max"])
+                    elif op == "random_sample_before":
+                        out = self._expand_random_sample(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["min"],
+                                                         symbol[op]["max"])
+                    elif op == "random_pick_before":
+                        out = self._expand_random_pick(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["min"],
+                                                         symbol[op]["max"])
                     elif op == "store_before":
                         out = self._expand_store(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["alias"])
+                    elif op == "ground_together":
+                        out = self._expand_ground(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["props"])
+                    elif op == "random_ground_together":
+                        out = self._expand_ground(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["props"], random=True)
+                    elif op == "subset_ground_together":
+                        out = self._expand_ground(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["props"], subset=True)
+                    elif op == "random_subset_ground_together":
+                        out = self._expand_ground(self._pre_expand_symbol(symbol[op]["list"]), symbol[op]["props"], random=True, subset=True)
         else:
             out = []
             for s in symbol:
@@ -638,10 +652,34 @@ class Task:
         return out
 
     # Wrapper for the recursive sampling procedure. It descends on the structure and grounds negations (not_), disjuntions (a|b) or don't care (~) attributes.
-    def _recursive_sampling(self, symbol):
+    # It optionally takes a dictionary of constraints {"shape": [...], "color": [...], "size": [...]} to restrict grounding.
+    # For now, it is used just for the ground_together(L, props) pre-grounding operator, but in the future it can be used for other operators.
+    def _recursive_sampling(self, symbol, defer_grounding=False, grounding_constraint=None):
+        assert not defer_grounding or grounding_constraint is not None, "If defer_grounding is True, grounding_constraint must be specified."
         if isinstance(symbol, dict):
             sizes = [list(x.keys())[0] for x in self.sizes]
             colors = [list(x.keys())[0] for x in self.colors]
+            shapes = self.shape_names
+
+
+            if grounding_constraint is not None and "size" in grounding_constraint:
+                assert isinstance(grounding_constraint["size"], list), "Size constraint should be a list, found {}.".format(type(grounding_constraint["size"]))
+                assert len(set(grounding_constraint["size"]).union(sizes)) == len(sizes), "Size constraints should be a subset of {}.".format(sizes)
+                sizes = grounding_constraint["size"]
+            if grounding_constraint is not None and "color" in grounding_constraint:
+                assert isinstance(grounding_constraint["color"],
+                                  list), "Color constraint should be a list, found {}.".format(
+                    type(grounding_constraint["color"]))
+                assert len(set(grounding_constraint["color"]).union(colors)) == len(
+                    colors), "Size constraints should be a subset of {}.".format(colors)
+                colors = grounding_constraint["color"]
+            if grounding_constraint is not None and "shape" in grounding_constraint:
+                assert isinstance(grounding_constraint["shape"],
+                                  list), "Shape constraint should be a list, found {}.".format(
+                    type(grounding_constraint["shape"]))
+                assert len(set(grounding_constraint["shape"]).union(shapes)) == len(
+                    shapes), "Size constraints should be a subset of {}.".format(shapes)
+                shapes = grounding_constraint["shape"]
 
             out = {}
 
@@ -650,46 +688,54 @@ class Task:
             operators = comp_ops + list_ops
 
             if len(operators) == 0:
-
-                if symbol["shape"] is None:
-                    out["shape"] = self.rng.choice(self.shape_names)
-                elif symbol["shape"].startswith("not_"):
-                    out["shape"] = self.rng.choice(list(set(self.shape_names) - {symbol["shape"][4:]}))
+                if not defer_grounding or "shape" in grounding_constraint:
+                    if symbol["shape"] is None:
+                        out["shape"] = self.rng.choice(shapes)
+                    elif symbol["shape"].startswith("not_"):
+                        out["shape"] = self.rng.choice(list(set(shapes) - {symbol["shape"][4:]}))
+                    else:
+                        out["shape"] = self.rng.choice(symbol["shape"].split("|"))
                 else:
-                    out["shape"] = self.rng.choice(symbol["shape"].split("|"))
+                    out["shape"] = symbol["shape"]
 
-                if symbol["color"] is None:
-                    out["color"] = self.rng.choice(colors)
-                elif symbol["color"].startswith("not_"):
-                    out["color"] = self.rng.choice(list(set(colors) - {symbol["color"][4:]}))
+                if not defer_grounding or "color" in grounding_constraint:
+                    if symbol["color"] is None:
+                        out["color"] = self.rng.choice(colors)
+                    elif symbol["color"].startswith("not_"):
+                        out["color"] = self.rng.choice(list(set(colors) - {symbol["color"][4:]}))
+                    else:
+                        out["color"] = self.rng.choice(symbol["color"].split("|"))
                 else:
-                    out["color"] = self.rng.choice(symbol["color"].split("|"))
+                    out["color"] = symbol["color"]
 
-                if symbol["size"] is None:
-                    out["size"] = self.rng.choice(sizes)
-                elif symbol["size"].startswith("not_"):
-                    out["size"] = self.rng.choice(list(set(sizes) - {symbol["size"][4:]}))
+                if not defer_grounding or "size" in grounding_constraint:
+                    if symbol["size"] is None:
+                        out["size"] = self.rng.choice(sizes)
+                    elif symbol["size"].startswith("not_"):
+                        out["size"] = self.rng.choice(list(set(sizes) - {symbol["size"][4:]}))
+                    else:
+                        out["size"] = self.rng.choice(symbol["size"].split("|"))
                 else:
-                    out["size"] = self.rng.choice(symbol["size"].split("|"))
+                    out["size"] = symbol["size"]
             elif len(comp_ops) == 1:
-                out[comp_ops[0]] = self._recursive_sampling(symbol[comp_ops[0]])
+                out[comp_ops[0]] = self._recursive_sampling(symbol[comp_ops[0]], defer_grounding, grounding_constraint)
             elif len(list_ops) == 1:
                 if len(self.list_operators[list_ops[0]]) == 0:
-                    out[list_ops[0]] = self._recursive_sampling(symbol[list_ops[0]])
+                    out[list_ops[0]] = self._recursive_sampling(symbol[list_ops[0]], defer_grounding, grounding_constraint)
                 else:
                     if list_ops[0] == "recall":
-                        out = self._recursive_sampling(self._expand_recall(symbol[list_ops[0]]["alias"]))
+                        out = self._recursive_sampling(self._expand_recall(symbol[list_ops[0]]["alias"]), defer_grounding, grounding_constraint)
                     elif list_ops[0] == "store":
-                        out = self._expand_store(self._recursive_sampling(symbol[list_ops[0]]["list"]), symbol[list_ops[0]]["alias"])
+                        out = self._expand_store(self._recursive_sampling(symbol[list_ops[0]]["list"], defer_grounding, grounding_constraint), symbol[list_ops[0]]["alias"])
                     else:
                         out[list_ops[0]] = {}
                         for k in self.list_operators[list_ops[0]]:
                             out[list_ops[0]][k] = symbol[list_ops[0]][k]
 
-                        out[list_ops[0]]["list"] = self._recursive_sampling(symbol[list_ops[0]]["list"])
+                        out[list_ops[0]]["list"] = self._recursive_sampling(symbol[list_ops[0]]["list"], defer_grounding, grounding_constraint)
 
         else:
-            out = [self._recursive_sampling(s) for s in symbol]
+            out = [self._recursive_sampling(s, defer_grounding, grounding_constraint) for s in symbol]
 
         return out
 
@@ -737,6 +783,10 @@ class Task:
                     elif op == "random_repeat":
                         out = self._expand_random_repeat(self._expand_symbol(symbol[op]["list"]), symbol[op]["min"],
                                                          symbol[op]["max"])
+                    elif op == "random_sample":
+                        out = self._expand_random_sample(self._expand_symbol(symbol[op]["list"]), symbol[op]["min"], symbol[op]["max"])
+                    elif op == "random_pick":
+                        out = self._expand_random_pick(self._expand_symbol(symbol[op]["list"]), symbol[op]["min"], symbol[op]["max"])
                     elif op == "store":
                         out = self._expand_store(self._expand_symbol(symbol[op]["list"]), symbol[op]["alias"])
                     elif op == "recall":
@@ -869,6 +919,18 @@ class Task:
         assert min < max
         n = self.rng.randint(min, max + 1)
         return l * n
+
+    # Expands a random_sample(min, max) list. It returns a random number of samples (with repetition) of the list between min and max (inclusive).
+    def _expand_random_sample(self, l, min, max):
+        assert min < max
+        n = self.rng.randint(min, max + 1)
+        return list(self.rng.choice(l, n, replace=True))
+
+    # Expands a random_pick(min, max) list. It returns a random number of samples (without repetition) of the list between min and max (inclusive).
+    def _expand_random_pick(self, l, min, max):
+        assert min < max
+        n = self.rng.randint(min, max + 1)
+        return list(self.rng.choice(l, n, replace=False))
 
     # Expands a store(alias) list. It returns the list itself, but memorizes it internally for later retrieval. It works both before and after grounding.
     def _expand_store(self, l, alias):
@@ -1155,6 +1217,62 @@ class Task:
 
         return {"shape": "|".join(out_shapes), "color": "|".join(out_colors), "size": "|".join(out_sizes)}
 
+    # Returns a grounded version of the list, by fixing the specified properties to the same (randomly sampled) value.
+    # If random=True, there is a 50% probability of not fixing grounding, if subset=True only a random subset of specified properties will be fixed.
+    def _expand_ground(self, l, properties, random=False, subset=False): # TODO: properties deve diventare un dizionario di {chiave: valori ammessi}
+
+        random_grounding = {"shape": None, "color": None, "size": None}
+
+        if "shape" in properties:
+            if properties["shape"] is None:
+                random_grounding["shape"] = self.rng.choice(self.shape_names)
+            elif properties["shape"].startswith("not_"):  # Negation.
+                assert properties["shape"][4:] in self.shape_names,  "Invalid shape. Found {}".format(properties["shape"])
+                random_grounding["shape"] = self.rng.choice(list(set(self.shape_names) - {properties["shape"][4:]}))
+            else:  # Disjunction or single value.
+                tmp = properties["shape"].split("|")
+                assert len(set(tmp).union(self.shape_names)) == len(self.shape_names), "Invalid shape. Found {}".format(properties["shape"])
+                random_grounding["shape"] = self.rng.choice(tmp)
+
+        if "color" in properties:
+            colors = [list(c.keys())[0] for c in self.colors]
+            if properties["color"] is None:
+                random_grounding["color"] = self.rng.choice(colors)
+            elif properties["color"].startswith("not_"):  # Negation.
+                assert properties["color"][4:] in colors,  "Invalid color. Found {}".format(properties["color"])
+                random_grounding["color"] = self.rng.choice(list(set(colors) - {properties["color"][4:]}))
+            else:  # Disjunction or single value.
+                tmp = properties["color"].split("|")
+                assert len(set(tmp).union(colors)) == len(colors), "Invalid color. Found {}".format(properties["color"])
+                random_grounding["color"] = self.rng.choice(tmp)
+
+        if "size" in properties:
+            sizes = [list(c.keys())[0] for c in self.sizes]
+            if properties["size"] is None:
+                random_grounding["size"] = self.rng.choice(sizes)
+            elif properties["size"].startswith("not_"):  # Negation.
+                assert properties["size"][4:] in sizes,  "Invalid size. Found {}".format(properties["size"])
+                random_grounding["size"] = self.rng.choice(list(set(sizes) - {properties["size"][4:]}))
+            else:  # Disjunction or single value.
+                tmp = properties["size"].split("|")
+                assert len(set(tmp).union(sizes)) == len(sizes), "Invalid color. Found {}".format(properties["size"])
+                random_grounding["size"] = self.rng.choice(tmp)
+
+        grounded_attributes = {p: [random_grounding[p]] for p in properties.keys()}
+
+        if subset:
+            n = self.rng.randint(1, len(grounded_attributes) + 1)
+            keys = list(sorted(grounded_attributes.keys()))
+            idxs = self.rng.choice(keys, size=n, replace=False)
+            grounded_attributes = {k: grounded_attributes[k] for k in idxs}
+
+        if random and self.rng.randint(0, 2) == 0:
+            out = l
+        else:
+            out = self._recursive_sampling(l, defer_grounding=True, grounding_constraint=grounded_attributes)
+
+        return out
+
     # Prefetches symbols for the task. It performs rejection sampling to generate self.total_samples unique samples.
     # If it fails for self.patience successive trials, it gives up and the smaller set will be sampled with repetition.
     # The generated samples (whether they are enough or not) is finally randomly partitioned into train, validation and test splits.
@@ -1340,6 +1458,8 @@ class CurriculumGenerator:
                                          "permute": {}, "random_shift": {}, "shift": {"n": int}, "sort": {"order": str, "keys": list},
                                          "palindrome": {}, "mirror": {}, "repeat": {"n": int},
                                          "random_repeat": {"min": int, "max": int},
+                                         "random_sample": {"min": int, "max": int},
+                                         "random_pick": {"min": int, "max": int},
                                          "argsort": {"idx": list},
                                          "store": {"alias": str},
                                          "recall": {"alias": str}
@@ -1352,8 +1472,11 @@ class CurriculumGenerator:
                                          "permute_before": {}, "random_shift_before": {}, "shift_before": {"n": int},
                                          "palindrome_before": {}, "mirror_before": {}, "repeat_before": {"n": int},
                                          "random_repeat_before": {"min": int, "max": int},
+                                         "random_sample_before": {"min": int, "max": int},
+                                         "random_pick_before": {"min": int, "max": int},
                                          "union": {}, "intersection": {}, "difference": {}, "symmetric_difference": {},
                                                       "store_before": {"alias": str},
+                                                      "ground_together": {"props": dict}, "random_ground_together": {"props": dict}, "subset_ground_together": {"props": dict},"random_subset_ground_together": {"props": dict},
                                                       "any_composition": {}, "any_displacement": {}, "any_line": {},
                                                       "any_diag": {}, "any_non_diag": {}, "any_quadrant": {}, "quadrant_or_center": {}
                                          }  # key, params

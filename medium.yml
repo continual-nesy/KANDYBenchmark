@@ -1,185 +1,31 @@
--
-  name: for each group exists shared shape
+- name: There is a composition of a triangle on top of a square
   gamma: 1.0
   beta: 1.0
-  samples: 1000
+  samples: 100
   train_split: 0.8
   val_split: 0.1
   noisy_color: True
   noisy_size: True
-  rot_noise: 0
+  rot_noise: 10
   positive_rule: >-
-   valid(C) :- shape(SH), forall(contains(C, C1), (contains(C1, C2), extract_shape(C2, SH))).
-
+    valid(C) :- contains(C, C1), obj1(C1).
   positive_set:
-  - grid:
-    - permute:
-      - any_diag:
-          - permute:
-              - random_repeat_before:
-                  min: 1
-                  max: 3
-                  list:
-                    - &any_obj { shape: ~, color: ~, size: ~ }
-              - store_before:
-                  alias: random_shape
-                  list:
-                    - pick_before: &fixed_random_shape
-                        n: 1
-                        list:
-                          - &any_tri { shape: triangle, color: ~, size: ~ }
-                          - &any_squ { shape: square, color: ~, size: ~ }
-                          - &any_cir { shape: circle, color: ~, size: ~ }
-      - random_repeat_before:
-          min: 1
-          max: 3
-          list:
-          - any_diag:
-            - permute:
-              - random_repeat_before:
-                  min: 1
-                  max: 3
-                  list:
-                  - *any_obj
-              - recall:
-                  alias: random_shape
-  negative_set:
-  - grid:
-    - random_repeat_before:
-        min: 2
-        max: 4
-        list:
-        - any_diag:
-          - permute:
-            - random_repeat_before:
-                min: 2
-                max: 4
-                list:
-                - *any_obj
--
-  name: for each group exists shared color
-  gamma: 1.0
-  beta: 1.0
-  samples: 1000
-  train_split: 0.8
-  val_split: 0.1
-  noisy_color: True
-  noisy_size: True
-  rot_noise: 0
-  positive_rule: >-
-    valid(C) :- color(CO), forall(contains(C, C1), (contains(C1, C2), extract_color(C2, CO))).
-
-  positive_set:
-    - grid:
-        - permute:
-            - any_diag:
-                - permute:
-                    - random_repeat_before:
-                        min: 1
-                        max: 3
-                        list:
-                          - *any_obj
-                    - store_before:
-                        alias: random_color
-                        list:
-                          - pick_before: &fixed_random_color
-                              n: 1
-                              list:
-                                - &any_red { shape: ~, color: red, size: ~ }
-                                - &any_grn { shape: ~, color: green, size: ~ }
-                                - &any_blu { shape: ~, color: blue, size: ~ }
-                                - &any_cyn { shape: ~, color: cyan, size: ~ }
-                                - &any_mag { shape: ~, color: magenta, size: ~ }
-                                - &any_ylw { shape: ~, color: yellow, size: ~ }
-            - random_repeat_before:
-                min: 1
-                max: 3
-                list:
-                  - any_diag:
-                      - permute:
-                          - random_repeat_before:
-                              min: 1
-                              max: 3
-                              list:
-                                - *any_obj
-                          - recall:
-                              alias: random_color
-  negative_set:
-    - grid:
-        - random_repeat_before:
-            min: 2
-            max: 4
+    - stack: &obj1
+        - ground_together:
+            props: { color: red|green, size: not_small }
             list:
-              - any_diag:
-                  - permute:
-                      - random_repeat_before:
-                          min: 2
-                          max: 4
-                          list:
-                            - *any_obj
--
-  name: for each group exists shared shape or color
-  gamma: 1.0
-  beta: 1.0
-  samples: 1000
-  train_split: 0.8
-  val_split: 0.1
-  noisy_color: True
-  noisy_size: True
-  rot_noise: 0
-  positive_rule: >-
-    valid(C) :- shape(SH), forall(contains(C, C1), (contains(C1, C2), extract_shape(C2, SH))).
-    valid(C) :- color(CO), forall(contains(C, C1), (contains(C1, C2), extract_color(C2, CO))).
-    
-
-  positive_set:
-    - grid:
-        - permute:
-            - any_diag:
-                - permute:
-                    - random_repeat_before:
-                        min: 1
-                        max: 3
-                        list:
-                          - *any_obj
-                    - store_before:
-                        alias: random_attr
-                        list:
-                          - pick_before: &fixed_random_attr
-                              n: 1
-                              list:
-                                - *any_tri
-                                - *any_squ
-                                - *any_cir
-                                - *any_red
-                                - *any_grn
-                                - *any_blu
-                                - *any_cyn
-                                - *any_mag
-                                - *any_ylw
-            - random_repeat_before:
-                min: 1
-                max: 3
-                list:
-                  - any_diag:
-                      - permute:
-                          - random_repeat_before:
-                              min: 1
-                              max: 3
-                              list:
-                                - *any_obj
-                          - recall:
-                              alias: random_attr
+              - {shape: triangle, color: ~, size: ~}
+              - {shape: square, color: ~, size: ~}
   negative_set:
-    - grid:
-        - random_repeat_before:
-            min: 2
-            max: 4
+    - any_line:
+        - ground_together:
+            props: { color: red|green }
             list:
-              - any_diag:
-                  - permute:
-                      - random_repeat_before:
-                          min: 2
-                          max: 4
-                          list:
-                            - *any_obj
+              - ground_together:
+                  props: {size: not_small }
+                  list:
+                    - random_repeat_before:
+                        min: 2
+                        max: 5
+                        list:
+                          - { shape: ~, color: ~, size: ~ }

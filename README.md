@@ -73,6 +73,7 @@ The following shorthand notations are available to avoid specifying combinations
 
 - Set operators `union(L), intersection(L), difference(L), symmetric_difference(L)`: they are replaced by the associative unfolding of the list with respect to the operator (the list must contain only atomic objects).
 They can be used to constrain grounding (especially when used in conjunction with `store_before` and `recall` operators).
+- Constraint operators `ground_together(L, props), random_ground_together(L, props), subset_ground_together(L, props), random_subset_ground_together(L, props)`: grounds `~` in the subtree by selecting the same value for the provided properties (e.g. a triangle and a square of the same color). Random variants may decide not to constrain values, subset variants will select a random subset of properties (e.g. `{color: red|yellow, size: not_large}` for some instances will fix the same color and the same size, while respecting the constraints, the same color or the same size; combined with random there is also a chance of not fixing any value).
 
 Top level concepts are implicitly disjunctive, allowing for complex tasks such as discriminating between "three red circles arranged diagonally, or three blue squares arranged vertically" (positive set) versus "three blue squares arranged diagonally, or three red circles arranged vertically" (negative set).
 
@@ -84,6 +85,8 @@ A positive/negative set is a list of top level objects. As syntactic sugar, to s
 - `shift(n, L)`: barrel shift list L by n to the right (left if n < 0), eg. `shift(2, [triangle, square, circle, circle, square]) -> [circle, square, triangle, square, circle]`
 - `repeat(n, L)`: repeat list L n times
 - `random_repeat(min, max, L)`: select a random integer between min and max (included) and repeat list L that amount of times
+- `random_sample(min, max, L)`: randomly sample n (chosen between min and max) elements from list L with repetition
+- `random_pick(min, max, L)`: randomly sample n (chosen between min and max) elements from list L without repetition
 - `permute(L)`: return a random permutation of list L
 - `mirror(L)`: append a mirrored list to L, eg. `mirror([triangle, square, circle]) -> [triangle, square, circle, circle, square, triangle]`
 - `palindrome(L)`: append a mirrored list to L excluding the last element which acts as pivot, eg. `palindrome([triangle, square, circle]) -> [triangle, square, circle, square, triangle]`
@@ -117,6 +120,8 @@ In case this behavior is not desired, the following variants of list operators p
 - `shift_before(n, L)`
 - `repeat_before(n, L)`
 - `random_repeat_before(min, max, L)`
+- `random_sample_before(min, max, L)`
+- `random_pick_before(min, max, L)`
 - `permute_before(L)`
 - `mirror_before(L)`
 - `palindrome_before(L)`

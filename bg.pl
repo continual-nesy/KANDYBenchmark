@@ -23,12 +23,12 @@ primary_color(blue).
 secondary_color(C) :- color(C), not(primary_color(C)).
 
 round_shape(circle).
-round_shape(ellipse_h).
-round_shape(ellipse_v).
+round_shape(ellipseh).
+round_shape(ellipsev).
 polygon_shape(S) :- shape(S), not(round_shape(S)).
 
 three_side(triangle).
-three_side(down_triangle).
+three_side(downtriangle).
 four_side(square).
 four_side(diamond).
 
@@ -94,19 +94,19 @@ obj3(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(O
 obj4(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [diag_ul_lr, diag_ll_ur]), same_shape(diamond, L), length(L, N), N >= 2, N =< 5.
 
 % stack: square down triangle
-obj5(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, square), extract_shape(C2, down_triangle).
+obj5(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, square), extract_shape(C2, downtriangle).
 
 % stack: triangle, down triangle
-obj6(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, triangle), extract_shape(C2, down_triangle).
+obj6(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, triangle), extract_shape(C2, downtriangle).
 
 % sequence of circles
 obj7(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side, side_by_side_reduce_bb, stack, stack_reduce_bb, diag_ul_lr, diag_ll_ur]), same_shape(circle, L), length(L, N), N >= 2, N =< 5.
 
 % horizontal sequence of ellipses (same direction)
-obj8(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side_reduce_bb, side_by_side]), same_shape(SH, L), member(SH, [ellipse_h, ellipse_v]), length(L, N), N >= 2, N =< 5.
+obj8(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(OP, [side_by_side_reduce_bb, side_by_side]), same_shape(SH, L), member(SH, [ellipseh, ellipsev]), length(L, N), N >= 2, N =< 5.
 
 % stack: ellipse_v, circle, ellipse_h
-obj9(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2, C3]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, ellipse_v), extract_shape(C2, circle), extract_shape(C3, ellipse_h).
+%obj9(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, [C1, C2, C3]), member(OP, [stack, stack_reduce_bb]), extract_shape(C1, ellipse_v), extract_shape(C2, circle), extract_shape(C3, ellipse_h).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,11 +136,11 @@ obj14(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, OP, L), member(
 obj15(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, side_by_side, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, stack, L1), length(L1, N), same_shape(circle, L1), dropmiddle(L, L2), same_shape(circle, L2).
 %obj15(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, diag_ul_lr, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, diag_ll_ur, L1), length(L1, N), same_shape(circle, L1), dropmiddle(L, L2), same_shape(circle, L2).
 
-% cross of ellipses, vertical arm contains only vertical ellipses, horizontal arm (except central element) contains only horizontal ellipses
-obj16(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, side_by_side, L), length(L, N), N >= 2, N =< 5, N mod 2 =:= 1, getmiddle(L, C1), extract_op_and_chld(C1, ellipse_v, L1), length(L1, N), same_shape(circle, L1), dropmiddle(L, L2), same_shape(ellipse_h, L2).
+% T of circles
+obj16(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, stack, [C1|L]), extract_op_and_chld(C1, side_by_side, L1), same_shape(circle, L), same_shape(circle, L1).
 
-% obj9 where the bottom element is replaced by an horizontal sequence of horizontal ellipses (obj8)
-obj17(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, stack, [C1, C2, C3]), extract_shape(C1, ellipse_v), extract_shape(C2, circle), extract_op_and_chld(C3, side_by_side, L), length(L, N), N >= 2, N =< 5, same_shape(ellipse_h, L).
+% inverted T of ellipses
+obj17(C) :- hierarchical_object(C, _, _), extract_op_and_chld(C, stack, L), droplast(L, L1), last(L, C1), extract_op_and_chld(C1, side_by_side, L2), same_shape(ellipsev, L1), same_shape(ellipseh, L2).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

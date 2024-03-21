@@ -13,7 +13,7 @@ sizes:
   - small: 15  # NOTE: When using additional shapes, this is too small to discriminate them!
   - medium: 25
   - large: 32
-shapes: # Lists, so they can be sorted. Keys should be unique.
+shapes: # Lists, so they can be sorted. Keys should be unique. # NOTE: to correctly parse properties, the current bg.pl background knowledge assumes shapes have no _ character in them.
   - circle: { type: ellipse, n: 1, rot: 0 }
   - ellipsev: {type: ellipse, n: 2, rot: 90}
   - ellipseh: {type: ellipse, n: 2, rot: 0}
