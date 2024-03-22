@@ -66,19 +66,22 @@ class Task:
         self.patience = patience # Number of trials for rejection sampling before giving up.
         self.rejected = {"positive": {"rule": 0, "existing": 0}, "negative": {"rule": 0, "existing": 0}}
 
+        self.prolog_concepts = config["concept_predicates"]
+        self.prolog_interpreter = config["interpreter"]
+
         if "positive_rule" in task_specs:
             tmp = re.sub("[\t\n\r]+", " ", task_specs["positive_rule"])
             tmp = re.sub(" +", " ", tmp)
 
             self.prolog_rules = [r for r in tmp.split(".") if r != " " and r != ""]
             self.prolog_bg_knowledge = config["background_knowledge"]
-            self.prolog_interpreter = config["interpreter"]
             self.prolog_check = len(self.prolog_rules) > 0 and self.prolog_bg_knowledge is not None
         else:
             self.prolog_rules = []
             self.prolog_bg_knowledge = None
-            self.prolog_interpreter = None
             self.prolog_check = False
+
+        self.concept_list = config["concept_list"]
 
         self.shape_templates = self._generate_shapes()
 
@@ -536,6 +539,14 @@ class Task:
         else:
             op = list(symbol.keys())[0]
             return "{}([{}])".format(op, ", ".join([self._symbol_to_prolog(x) for x in symbol[op]]))
+
+    def _extract_concepts(self, symbol):
+        out = {}
+        for c in self.concept_list:
+            query = "{}({})".format(c, symbol)
+
+            out[c] = 1 if len(list(self.prolog_interpreter.query(query, maxresult=1))) > 0 else 0
+        return out
 
     # Upper level wrapper. Samples a random symbol from a sample set (positive/negative).
     def _sample_symbol(self, sample_set):
@@ -1295,21 +1306,24 @@ class Task:
 
             if str(symbol) not in symbol_hash:  # Assuming no symbol is both positive and negative, otherwise the task is ill defined.
                 if self.prolog_check:
-                    query = "valid({})".format(self._symbol_to_prolog(symbol))
+                    s2pl = self._symbol_to_prolog(symbol)
+                    query = "valid({})".format(s2pl)
 
                     symbol_hash.add(str(symbol)) # We add the symbol to the hash set also in case it violates the rule, to avoid resampling it.
 
                     if self._check_rule(query) == bool(label):
                         i = 0
 
-                        self.symbol_set.append((symbol, label))
+                        concepts = self._extract_concepts(s2pl)
+                        self.symbol_set.append((symbol, label, concepts))
                     else:
                         i += 1
                         self._log("{} sample {} {} the rule. Rejected.".format(("Positive" if label else "Negative"), str(symbol), ("violates" if label else "satisfies")), "warning")
                         self.rejected["positive" if label else "negative"]["rule"] += 1
                 else:
                     symbol_hash.add(str(symbol))
-                    self.symbol_set.append((symbol, label))
+                    concepts = self._extract_concepts(s2pl)
+                    self.symbol_set.append((symbol, label, concepts))
                     i = 0
             else:
                 i += 1
@@ -1356,16 +1370,16 @@ class Task:
             split = "train"
 
         if self.with_replacement:
-            (symbol, label) = self.datasets[split][self.rng.choice(len(self.datasets[split]))]
+            (symbol, label, concepts) = self.datasets[split][self.rng.choice(len(self.datasets[split]))]
         else:
             assert self.idx[split] < len(self.datasets[split]), "Index out of range for dataset {}.".format(split)
 
-            (symbol, label) = self.datasets[split][self.idx[split]]
+            (symbol, label, concepts) = self.datasets[split][self.idx[split]]
             self.idx[split] += 1
 
         sample_img = self._draw_sample(symbol)
 
-        return sample_img, label, self.task_id, symbol
+        return sample_img, label, self.task_id, symbol, concepts
 
 
     # Produces a batch of supervised samples. If there are enough unique samples, the last batch may contain fewer elements (self.total_samples % batch_size).
@@ -1415,9 +1429,9 @@ class Task:
             t = i * scale
 
             supervised = int(self.rng.random() < self.gamma * np.exp(-self.gamma * t))
-            sample_img, label, task_id, symbol = self.sample_supervised(split)
+            sample_img, label, task_id, symbol, concepts = self.sample_supervised(split)
             self._log("{}SUPERVISED SAMPLE: {}".format(("" if supervised else "UN"), symbol))
-            yield sample_img, label, supervised, task_id, symbol
+            yield sample_img, label, supervised, task_id, symbol, concepts
 
         self._log("END OF TASK {}".format(self.name))
 
@@ -1579,6 +1593,10 @@ class CurriculumGenerator:
             assert isinstance(config["background_knowledge"], str), "Optional parameter background_knowledge should be a string, {} found.".format(type(config["background_knowledge"]))
             assert os.path.isfile(config["background_knowledge"]), "File {} does not exist.".format(config["background_knowledge"])
 
+        if "concept_predicates" in config:
+            assert isinstance(config["concept_predicates"], str), "Optional parameter concept_predicates should be a string, {} found.".format(type(config["concept_predicates"]))
+            assert os.path.isfile(config["concept_predicates"]), "File {} does not exist.".format(config["concept_predicates"])
+
     # Wrapper for recursive validation of a curriculum YAML file.
     def validate_curriculum(self, curriculum):
         assert isinstance(curriculum, list), "The curriculum must be a list of tasks."
@@ -1703,13 +1721,30 @@ class CurriculumGenerator:
         self.config["h_sigma"] = max(0.0, float(config["h_sigma"]))
         self.config["s_sigma"] = max(0.0, float(config["s_sigma"]))
         self.config["v_sigma"] = max(0.0, float(config["v_sigma"]))
+
+        if "background_knowledge" in config and "concept_predicates" in config:
+            self.config["interpreter"] = pyswip.Prolog()
+        else:
+            self.config["interpreter"] = None
+
+        self.config["background_knowledge"] = None
+        self.config["concept_predicates"] = None
+        self.config["concept_list"] = []
+
         if "background_knowledge" in config:
             self.config["background_knowledge"] = config["background_knowledge"]
-            self.config["interpreter"] = pyswip.Prolog()
             self.config["interpreter"].consult(self.config["background_knowledge"])
-        else:
-            self.config["background_knowledge"] = None
-            self.config["interpreter"] = None
+        if "concept_predicates" in config:
+            self.config["concept_predicates"] = config["concept_predicates"]
+            self.config["interpreter"].consult(self.config["concept_predicates"])
+
+            with open(self.config["concept_predicates"], "r") as file:
+                for l in file:
+                    if re.match("[^%]*:-", l):
+                        tmp = re.match("\\s*([a-z]\\w*)\\(.*\\).*", l)
+                        if tmp and tmp.group(1) not in self.config["concept_list"]:
+                            self.config["concept_list"].append(tmp.group(1))
+
 
     # Parse the curriculum YAML.
     def _parse_curriculum(self, curriculum):
@@ -1744,17 +1779,19 @@ class CurriculumGenerator:
         label_np = np.zeros(batch_size, dtype=bool)
         supervised_np = np.zeros(batch_size, dtype=bool)
         symbols_list = []
+        concept_list = []
 
         while self.current_task < len(self.tasks):
             for sample in self.tasks[self.current_task].get_stream(split):
 
-                sample_img, label, supervised, tid, symbol = sample
+                sample_img, label, supervised, tid, symbol, concepts = sample
 
                 tid_np[i] = tid
                 img_np[i, :, :, :] = sample_img
                 label_np[i] = label
                 supervised_np[i] = supervised
                 symbols_list.append(symbol)
+                concept_list.append(concepts)
 
                 i += 1
 
@@ -1762,7 +1799,7 @@ class CurriculumGenerator:
                     tid_np = np.where(self.rng.random(size=batch_size) < task_id_noise,
                                       self.rng.randint(len(self.tasks), size=batch_size), tid_np)
 
-                    yield img_np, label_np, supervised_np, tid_np, symbols_list
+                    yield img_np, label_np, supervised_np, tid_np, symbols_list, concept_list
                     i = 0
                     tid_np = np.zeros(batch_size, dtype=np.uint16)
                     img_np = np.zeros((batch_size, self.config["canvas_size"][0], self.config["canvas_size"][1], 3),
@@ -1770,13 +1807,14 @@ class CurriculumGenerator:
                     label_np = np.zeros(batch_size, dtype=bool)
                     supervised_np = np.zeros(batch_size, dtype=bool)
                     symbols_list = []
+                    concept_list = []
 
             self.current_task += 1
 
             if i > 0:
                 tid_np[:i] = np.where(self.rng.random(size=i) < task_id_noise,
                                       self.rng.randint(len(self.tasks), size=i), tid_np[:i])
-                yield img_np[:i, :, :, :], label_np[:i], supervised_np[:i], tid_np[:i], symbols_list
+                yield img_np[:i, :, :, :], label_np[:i], supervised_np[:i], tid_np[:i], symbols_list, concept_list
 
     # Generator for the entire curriculum. Works like generate_curriculum, but the task from which a sample is extracted is selected randomly.
     # Since each task will be exhausted at some point, sampling is not completely i.i.d., with batches later in the curriculum being sampled from fewer and fewer tasks.
@@ -1797,18 +1835,20 @@ class CurriculumGenerator:
         label_np = np.zeros(batch_size, dtype=bool)
         supervised_np = np.zeros(batch_size, dtype=bool)
         symbols_list = []
+        concept_list = []
 
         while len(task_iterators) > 0:
             task = self.rng.choice(task_iterators)
 
             try:
-                sample_img, label, supervised, tid, symbol = next(task)
+                sample_img, label, supervised, tid, symbol, concepts = next(task)
 
                 tid_np[i] = tid
                 img_np[i, :, :, :] = sample_img
                 label_np[i] = label
                 supervised_np[i] = supervised
                 symbols_list.append(symbol)
+                concept_list.append(concepts)
 
                 i += 1
 
@@ -1816,7 +1856,7 @@ class CurriculumGenerator:
                     tid_np = np.where(self.rng.random(size=batch_size) < task_id_noise,
                                       self.rng.randint(len(self.tasks), size=batch_size), tid_np)
 
-                    yield img_np, label_np, supervised_np, tid_np, symbols_list
+                    yield img_np, label_np, supervised_np, tid_np, symbols_list, concept_list
                     i = 0
                     tid_np = np.zeros(batch_size, dtype=np.uint16)
                     img_np = np.zeros((batch_size, self.config["canvas_size"][0], self.config["canvas_size"][1], 3),
@@ -1824,13 +1864,14 @@ class CurriculumGenerator:
                     label_np = np.zeros(batch_size, dtype=bool)
                     supervised_np = np.zeros(batch_size, dtype=bool)
                     symbols_list = []
+                    concept_list = []
             except StopIteration:
                 task_iterators.remove(task)
 
         if i > 0:
             tid_np[:i] = np.where(self.rng.random(size=i) < task_id_noise,
                                   self.rng.randint(len(self.tasks), size=batch_size), tid_np)
-            yield img_np[:i, :, :, :], label_np[:i], supervised_np[:i], tid_np[:i], symbols_list
+            yield img_np[:i, :, :, :], label_np[:i], supervised_np[:i], tid_np[:i], symbols_list, concept_list
 
     # Returns a batch for task i.
     def get_batch(self, i, batch_size, split=None):

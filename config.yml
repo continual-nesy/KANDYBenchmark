@@ -10,7 +10,7 @@ colors: # Lists, so they can be sorted. Keys should be unique.
   - blue: "#0000ff"
   - magenta: "#ff00ff"
 sizes:
-  - small: 15  # NOTE: When using additional shapes, this is too small to discriminate them!
+  - small: 15
   - medium: 25
   - large: 32
 shapes: # Lists, so they can be sorted. Keys should be unique. # NOTE: to correctly parse properties, the current bg.pl background knowledge assumes shapes have no _ character in them.
@@ -29,4 +29,5 @@ size_noise: 2
 h_sigma: 0.01
 s_sigma: 0.2
 v_sigma: 0.2
-background_knowledge: bg.pl
+background_knowledge: bg.pl # Optional (but recommended): background knowledge for rejection rules.
+concept_predicates: concepts.pl # Optional: each of these predicates will be evaluated on each sample to create binary concept annotations. Their names should be different from predicates in background_knowledge.

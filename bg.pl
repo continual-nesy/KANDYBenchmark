@@ -169,7 +169,9 @@ same_size(SZ, [H|T]) :- extract_size(H, SZ), same_size(SZ, T).
 
 contains(C, X) :- extract_children(C, L), member(X, L).
 
+recursive_contains(C, C).
 recursive_contains(C, X) :- contains(C, X), atom(X).
+recursive_contains(C, X) :- contains(C, X), functor(X, _, 1).
 recursive_contains(C, X) :- contains(C, C1), recursive_contains(C1, X).
 
 

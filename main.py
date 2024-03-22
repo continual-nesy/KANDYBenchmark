@@ -87,17 +87,23 @@ if __name__ == "__main__":
     for split in ["train", "val", "test"]:
         with open("samples/sets/{}/annotations.csv".format(split), "w", newline="\n", encoding="utf-8") as csvfile:
             fieldnames = ["filename", "task_id", "label", "supervised", "symbol"]
+            fieldnames.extend(cg.config["concept_list"])
+
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames, quoting=csv.QUOTE_NONNUMERIC)
             writer.writeheader()
 
             for i in range(len(cg.tasks)):
                 os.mkdir("samples/sets/{}/{}".format(split, i))
                 for j, sample in enumerate(cg.get_stream(i, split)): # NOTE: get_batch() can be called an infinite number of times, since it randomly samples the split sets.
-                    sample_img, label, supervised, task_id, symbol = sample
+                    sample_img, label, supervised, task_id, symbol, concepts = sample
+
+                    row = {"filename": "{}/{:04d}.png".format(i, j), "task_id": task_id, "label": label, "supervised": supervised,
+                                     "symbol": symbol}
+                    for k, v in concepts.items():
+                        row[k] = v
 
                     sample_img.save("samples/sets/{}/{}/{:04d}.png".format(split, i, j), "PNG")
-                    writer.writerow({"filename": "{}/{:04d}.png".format(i, j), "task_id": task_id, "label": label, "supervised": supervised,
-                                     "symbol": symbol})
+                    writer.writerow(row)
 
     cg.reset()
     with open("samples/shuffled_curriculum/stats.txt", "w", newline="\n", encoding="utf-8") as file:
@@ -155,9 +161,16 @@ if __name__ == "__main__":
     for split in ["train", "val", "test"]:
         with open("samples/shuffled_curriculum/{}/annotations.csv".format(split), "w", newline="\n", encoding="utf-8") as csvfile:
             fieldnames = ["filename", "task_id", "label", "supervised", "symbol"]
+            fieldnames.extend(cg.config["concept_list"])
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames, quoting=csv.QUOTE_NONNUMERIC)
             writer.writeheader()
             for i, sample in enumerate(cg.generate_shuffled_curriculum(split, task_id_noise=0.3, batch_size=1)): # NOTE: generate_shuffled_curriculum() acts as a finite stream, but samples are still chosen randomly.
-                sample_img, label, supervised, task_id, symbol = sample
+                sample_img, label, supervised, task_id, symbol, concepts = sample
+
                 Image.fromarray(sample_img[0]).save("samples/shuffled_curriculum/{}/0/{:06d}.png".format(split, i), "PNG")
-                writer.writerow({"filename": "0/{:06d}.png".format(i), "task_id": task_id[0], "label": label[0], "supervised": supervised[0], "symbol": symbol[0]})
+
+                row = {"filename": "0/{:06d}.png".format(i), "task_id": task_id[0], "label": label[0], "supervised": supervised[0], "symbol": symbol[0]}
+                for k, v in concepts[0].items():
+                    row[k] = v
+
+                writer.writerow(row)
